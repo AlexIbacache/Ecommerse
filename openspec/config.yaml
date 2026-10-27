@@ -1,0 +1,74 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+context: |
+  Dominio: aplicación de e-commerce full stack (práctica profesional) con tienda
+  pública, panel administrativo y pagos PayPal Sandbox. Definida en
+  requisitos-ecommerce.txt; la evaluación pondera Diseño/UX 30%, Seguridad y
+  lógica de backend 30%, funcionamiento 20%, PayPal 10%, Docker 5%, docs 5%.
+
+  Tech stack (confirmado):
+  - Frontend: Next.js (App Router), React, Tailwind CSS, shadcn/ui (Radix),
+    Zustand, Motion, toasts, Zod. UI en español.
+  - Backend: NestJS + TypeScript, API REST, validación Zod, Prisma ORM.
+  - Base de datos: PostgreSQL 16 en Docker con volumen nombrado.
+  - Infraestructura: Docker + Docker Compose, mínimo 3 servicios
+    (frontend, backend, db). Prohibido CRUD basado solo en LocalStorage.
+  - Pagos: PayPal Orders API v2, EXCLUSIVAMENTE entorno Sandbox.
+
+  Decisiones de arquitectura confirmadas (no reabrir sin consultar):
+  - El backend es la única fuente de verdad: importes SIEMPRE recalculados
+    server-side desde la DB; el frontend nunca envía totales confiables.
+  - Verificación de pagos 100% server-side (get + capture contra PayPal);
+    paypal_order_id UNIQUE como clave de idempotencia.
+  - Stock: validar al crear la orden y descontar de forma atómica
+    (UPDATE ... WHERE stock >= qty) al CONFIRMARSE el pago.
+  - Dinero: NUMERIC(10,2) / Prisma Decimal, moneda única USD, jamás float.
+  - Auth: JWT de corta duración (15 min) en cookie httpOnly Secure
+    SameSite=Lax + refresh token rotativo; contraseñas con argon2id.
+  - Autorización y ownership se verifican en el backend (service), no solo
+    en guards de ruta ni en la interfaz.
+  - Comentarios: permitidos para anónimos y registrados, post-moderación
+    (visibles al instante; admin puede ocultar/eliminar).
+  - Checkout REQUIERE cuenta; navegar y comentar no la requieren.
+  - Imágenes de productos por URL (no upload de archivos).
+  - Tests automatizados de lógica crítica (auth, pagos, stock) están EN scope;
+    el resto de los bonus del documento quedan fuera.
+
+  Convenciones:
+  - Monorepo: frontend/ (Next.js), backend/ (NestJS, con prisma/ adentro),
+    docs/, docker-compose.yml en la raíz.
+  - Documentación y artefactos en español neutro y profesional; código e
+    identificadores en inglés.
+  - Estados de pedido: PENDIENTE_PAGO, PAGADO, PAGO_FALLIDO, CANCELADO.
+  - Roles: CLIENTE, ADMINISTRADOR.
+
+  Nota de ejecución (preferencia del usuario):
+  - Los changes auth-and-rbac y checkout-paypal DEBEN implementarse con el
+    modelo de mayor capacidad disponible (p. ej. DeepSeek V4 Pro), no con
+    modelos flash/económicos, por su peso en la evaluación de seguridad y pagos.
+  - El resto de los changes puede ejecutarse con modelos económicos.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing

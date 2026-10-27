@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDIENTE_PAGO
+  PAGADO
+  PAGO_FALLIDO
+  CANCELADO
+}
+
+enum PaymentStatus {
+  CREADA
+  APROBADA
+  COMPLETADA
+  FALLIDA
+  CANCELADA
+}
+
+enum CommentStatus {
+  VISIBLE
+  OCULTO
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  name         String
+  roleId       Int       @map("role_id")
+  role         Role      @relation(fields: [roleId], references: [id])
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  orders       Order[]
+  comments     Comment[]
+  sessions     Session[]
+}
+
+model Session {
+  id               Int       @id @default(autoincrement())
+  userId           Int       @map("user_id")
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokenHash String    @map("refresh_token_hash")
+  expiresAt        DateTime  @map("expires_at")
+  revokedAt        DateTime? @map("revoked_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([refreshTokenHash])
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  products    Product[]
+}
+
+model Product {
+  id          Int            @id @default(autoincrement())
+  name        String
+  slug        String         @unique
+  description String
+  price       Decimal        @db.Decimal(10, 2)
+  stock       Int            @default(0)
+  isActive    Boolean        @default(true) @map("is_active")
+  categoryId  Int            @map("category_id")
+  category    Category       @relation(fields: [categoryId], references: [id])
+  images      ProductImage[]
+  comments    Comment[]
+  orderItems  OrderItem[]
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  @@index([categoryId])
+  @@index([name])
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  productId Int     @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  position  Int     @default(0)
+
+  @@index([productId])
+}
+
+model Comment {
+  id        Int           @id @default(autoincrement())
+  productId Int           @map("product_id")
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    Int?          @map("user_id")
+  user      User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  guestName String?       @map("guest_name")
+  content   String        @db.VarChar(1000)
+  status    CommentStatus @default(VISIBLE)
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  @@index([productId])
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  userId    Int         @map("user_id")
+  user      User        @relation(fields: [userId], references: [id])
+  status    OrderStatus @default(PENDIENTE_PAGO)
+  total     Decimal     @db.Decimal(10, 2)
+  currency  String      @default("USD")
+  items     OrderItem[]
+  payment   Payment?
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int     @map("order_id")
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId Int     @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Decimal @map("unit_price") @db.Decimal(10, 2)
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Payment {
+  id              Int           @id @default(autoincrement())
+  orderId         Int           @unique @map("order_id")
+  order           Order         @relation(fields: [orderId], references: [id])
+  provider        String        @default("PAYPAL")
+  paypalOrderId   String?       @unique @map("paypal_order_id")
+  paypalCaptureId String?       @map("paypal_capture_id")
+  status          PaymentStatus @default(CREADA)
+  amount          Decimal       @db.Decimal(10, 2)
+  currency        String        @default("USD")
+  rawPayload      Json?         @map("raw_payload")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+}
