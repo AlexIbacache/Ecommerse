@@ -86,14 +86,14 @@ export function CatalogControls({
       ?.label ?? 'Ordenar';
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 md:flex-row md:items-center">
+    <div className="flex flex-col gap-3 rounded-xl border bg-card p-3 shadow-sm sm:p-4 md:flex-row md:items-center">
       <div className="relative flex-1">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Buscar productos…"
-          className="pl-9"
+          className="pl-10"
           aria-label="Buscar productos"
         />
       </div>
@@ -105,7 +105,7 @@ export function CatalogControls({
             navigate({ category: value === 'all' ? undefined : value })
           }
         >
-          <SelectTrigger className="md:w-44" aria-label="Filtrar por categoría">
+          <SelectTrigger className="md:w-56" aria-label="Filtrar por categoría">
             <span className="truncate">{selectedCategoryName}</span>
           </SelectTrigger>
           <SelectContent>

@@ -18,12 +18,12 @@ import { formatPrice } from '@/lib/format';
 import { profileSchema } from '@/lib/schemas';
 import { useAuthStore } from '@/stores/auth-store';
 
-type BadgeVariant = 'default' | 'accent' | 'outline' | 'muted';
+type BadgeVariant = 'default' | 'accent' | 'outline' | 'muted' | 'success' | 'warning' | 'destructive';
 
 const ORDER_STATUS: Record<string, { label: string; variant: BadgeVariant }> = {
-  PENDIENTE_PAGO: { label: 'Pendiente de pago', variant: 'muted' },
-  PAGADO: { label: 'Pagado', variant: 'default' },
-  PAGO_FALLIDO: { label: 'Pago fallido', variant: 'accent' },
+  PENDIENTE_PAGO: { label: 'Pendiente de pago', variant: 'warning' },
+  PAGADO: { label: 'Pagado', variant: 'success' },
+  PAGO_FALLIDO: { label: 'Pago fallido', variant: 'destructive' },
   CANCELADO: { label: 'Cancelado', variant: 'outline' },
 };
 
@@ -123,16 +123,17 @@ function AccountContent() {
   }
 
   return (
-    <div className="container-page py-10">
-      <h1 className="text-3xl font-semibold">Mi cuenta</h1>
+    <div className="container-page py-10 sm:py-14">
+      <p className="eyebrow">Cuenta</p>
+      <h1 className="mt-1 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Mi cuenta</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Gestioná tus datos y consultá tus compras.
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.25fr]">
-        <section className="h-fit rounded-lg border bg-card p-6">
-          <h2 className="text-lg font-semibold">Datos de la cuenta</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+        <section className="h-fit rounded-xl border bg-card p-6 shadow-sm sm:p-8">
+          <h2 className="font-display text-xl font-medium tracking-tight">Datos de la cuenta</h2>
+          <p className="mt-2 font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">
             Rol: {user?.role === 'ADMINISTRADOR' ? 'Administrador' : 'Cliente'}
           </p>
 
@@ -143,7 +144,7 @@ function AccountContent() {
               </label>
               <Input id="name" value={name} onChange={(event) => setName(event.target.value)} />
               {fieldErrors.name && (
-                <p className="text-xs text-destructive">{fieldErrors.name}</p>
+                <p role="alert" className="text-sm text-destructive">{fieldErrors.name}</p>
               )}
             </div>
 
@@ -158,7 +159,7 @@ function AccountContent() {
                 onChange={(event) => setEmail(event.target.value)}
               />
               {fieldErrors.email && (
-                <p className="text-xs text-destructive">{fieldErrors.email}</p>
+                <p role="alert" className="text-sm text-destructive">{fieldErrors.email}</p>
               )}
             </div>
 
@@ -169,19 +170,20 @@ function AccountContent() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold">Historial de compras</h2>
+          <p className="eyebrow">Pedidos</p>
+          <h2 className="mt-1 font-display text-xl font-medium tracking-tight">Historial de compras</h2>
 
           <div className="mt-4 space-y-3">
             {orders === null && !ordersError ? (
               Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton key={index} className="h-24 w-full rounded-lg" />
+                <Skeleton key={index} className="h-24 w-full rounded-lg" aria-hidden="true" />
               ))
             ) : ordersError ? (
-              <div className="rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground">
+              <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">
                 No pudimos cargar tus compras. Recargá la página para reintentar.
               </div>
             ) : (orders ?? []).length === 0 ? (
-              <div className="rounded-lg border bg-card p-6 text-center">
+              <div className="rounded-xl border border-dashed border-input bg-card p-8 text-center">
                 <p className="text-sm text-muted-foreground">
                   Todavía no realizaste compras.
                 </p>
@@ -200,24 +202,24 @@ function AccountContent() {
                   <Link
                     key={order.id}
                     href={`/cuenta/pedidos/${order.id}`}
-                    className="block rounded-lg border bg-card p-4 transition-colors hover:bg-secondary/40"
+                    className="block rounded-lg border bg-card p-4 shadow-sm transition-[box-shadow,transform,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transform-none sm:p-5"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div>
-                        <p className="font-medium">Pedido #{order.id}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-display font-medium">Pedido #{order.id}</p>
+                        <p className="font-mono text-xs text-muted-foreground">
                           {formatDate(order.createdAt)} · {order.itemCount} ítem(s)
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
                         <Badge variant={status.variant}>{status.label}</Badge>
-                        <span className="text-sm font-semibold">
+                        <span className="font-display text-base font-medium tabular-nums">
                           {formatPrice(order.total)}
                         </span>
                       </div>
                     </div>
                     {order.paymentStatus && (
-                      <p className="mt-2 text-xs text-muted-foreground">
+                      <p className="mt-2 font-mono text-xs text-muted-foreground">
                         Pago: {PAYMENT_STATUS[order.paymentStatus] ?? order.paymentStatus}
                       </p>
                     )}

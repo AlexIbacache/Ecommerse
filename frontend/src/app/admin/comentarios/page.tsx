@@ -88,7 +88,7 @@ export default function AdminCommentsPage() {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-xl font-semibold">Comentarios</h2>
+      <h2 className="font-display text-2xl font-normal tracking-[-0.02em]">Comentarios</h2>
 
       {loading ? (
         <div className="space-y-3">
@@ -97,7 +97,7 @@ export default function AdminCommentsPage() {
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-lg border bg-card p-8 text-center">
+        <div className="rounded-xl border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">
             No pudimos cargar los comentarios.
           </p>
@@ -106,13 +106,13 @@ export default function AdminCommentsPage() {
           </Button>
         </div>
       ) : comments && comments.length === 0 ? (
-        <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-xl border bg-card p-8 text-center text-sm text-muted-foreground">
           No hay comentarios para moderar.
         </div>
       ) : (
         <ul className="space-y-3">
           {(comments ?? []).map((comment) => (
-            <li key={comment.id} className="rounded-lg border bg-card p-4">
+            <li key={comment.id} className="rounded-xl border bg-card p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="text-sm font-semibold">
@@ -123,11 +123,11 @@ export default function AdminCommentsPage() {
                       </span>
                     )}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="font-mono text-xs text-muted-foreground">
                     {comment.product.name} · {formatDate(comment.createdAt)}
                   </p>
                 </div>
-                <Badge variant={comment.status === 'VISIBLE' ? 'muted' : 'outline'}>
+                <Badge variant={comment.status === 'VISIBLE' ? 'success' : 'outline'}>
                   {comment.status === 'VISIBLE' ? 'Visible' : 'Oculto'}
                 </Badge>
               </div>

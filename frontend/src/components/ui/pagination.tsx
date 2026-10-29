@@ -30,7 +30,7 @@ export function Pagination({ page, totalPages, hrefForPage }: PaginationProps) {
         href={hrefForPage(page - 1)}
         aria-disabled={!hasPrevious}
         className={cn(
-          'inline-flex h-9 items-center gap-1 rounded-md px-3 text-sm',
+          'inline-flex h-11 items-center gap-1 rounded-full px-4 text-sm transition-colors',
           hasPrevious ? 'hover:bg-secondary' : 'pointer-events-none opacity-40',
         )}
       >
@@ -49,9 +49,9 @@ export function Pagination({ page, totalPages, hrefForPage }: PaginationProps) {
               href={hrefForPage(value)}
               aria-current={value === page ? 'page' : undefined}
               className={cn(
-                'inline-flex h-9 w-9 items-center justify-center rounded-md text-sm',
+                'inline-flex h-11 w-11 items-center justify-center rounded-full font-mono text-sm transition-colors',
                 value === page
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'hover:bg-secondary',
               )}
             >
@@ -65,7 +65,7 @@ export function Pagination({ page, totalPages, hrefForPage }: PaginationProps) {
         href={hrefForPage(page + 1)}
         aria-disabled={!hasNext}
         className={cn(
-          'inline-flex h-9 items-center gap-1 rounded-md px-3 text-sm',
+          'inline-flex h-11 items-center gap-1 rounded-full px-4 text-sm transition-colors',
           hasNext ? 'hover:bg-secondary' : 'pointer-events-none opacity-40',
         )}
       >

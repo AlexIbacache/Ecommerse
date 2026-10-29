@@ -53,72 +53,79 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="container-page flex min-h-[70vh] items-center justify-center py-12">
+    <div className="container-page flex min-h-[72vh] items-center justify-center py-12 sm:py-16">
       <form
-        className="w-full max-w-sm space-y-5 rounded-lg border bg-card p-8 shadow-sm"
+        className="w-full max-w-md space-y-5 rounded-xl border bg-card p-6 shadow-md sm:p-10"
         onSubmit={onSubmit}
         noValidate
       >
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold">Crear cuenta</h1>
+        <div className="space-y-2">
+          <p className="eyebrow">Registro</p>
+          <h1 className="text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Crear cuenta</h1>
           <p className="text-sm text-muted-foreground">
             Registrate para comprar y consultar tus pedidos.
           </p>
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="name" className="text-sm font-medium">
+          <label htmlFor="name" className="text-sm font-medium text-foreground">
             Nombre
           </label>
           <Input
             id="name"
+            aria-invalid={Boolean(fieldErrors.name)}
+            aria-describedby={fieldErrors.name ? 'name-error' : undefined}
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
           {fieldErrors.name && (
-            <p className="text-xs text-destructive">{fieldErrors.name}</p>
+            <p id="name-error" role="alert" className="text-sm text-destructive">{fieldErrors.name}</p>
           )}
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="email" className="text-sm font-medium">
+          <label htmlFor="email" className="text-sm font-medium text-foreground">
             Email
           </label>
           <Input
             id="email"
+            aria-invalid={Boolean(fieldErrors.email)}
+            aria-describedby={fieldErrors.email ? 'email-error' : undefined}
             type="email"
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
           />
           {fieldErrors.email && (
-            <p className="text-xs text-destructive">{fieldErrors.email}</p>
+            <p id="email-error" role="alert" className="text-sm text-destructive">{fieldErrors.email}</p>
           )}
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="password" className="text-sm font-medium">
+          <label htmlFor="password" className="text-sm font-medium text-foreground">
             Contraseña
           </label>
           <Input
             id="password"
+            aria-invalid={Boolean(fieldErrors.password)}
+            aria-describedby={fieldErrors.password ? 'password-error' : undefined}
             type="password"
             autoComplete="new-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
           {fieldErrors.password && (
-            <p className="text-xs text-destructive">{fieldErrors.password}</p>
+            <p id="password-error" role="alert" className="text-sm text-destructive">{fieldErrors.password}</p>
           )}
         </div>
 
-        <Button type="submit" className="w-full" disabled={submitting}>
+        <Button type="submit" size="lg" className="w-full" disabled={submitting}>
           {submitting ? 'Creando cuenta…' : 'Crear cuenta'}
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
           ¿Ya tenés cuenta?{' '}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          <Link href="/login" className="inline-flex min-h-11 items-center font-medium text-accent underline-offset-4 hover:underline">
             Ingresar
           </Link>
         </p>

@@ -4,22 +4,22 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-[background-color,color,border-color,box-shadow,transform] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        accent: 'bg-accent text-accent-foreground hover:bg-accent/90',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md dark:hover:shadow-glow',
+        accent: 'bg-accent text-accent-foreground hover:bg-accent/90 hover:shadow-md',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-input bg-transparent hover:bg-secondary',
-        ghost: 'hover:bg-secondary',
-        link: 'text-primary underline-offset-4 hover:underline',
+        outline: 'border border-input bg-card text-foreground hover:border-foreground/40 hover:bg-secondary',
+        ghost: 'text-foreground hover:bg-secondary',
+        link: 'rounded-sm text-accent underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-10 px-5 py-2',
-        sm: 'h-9 px-4 text-sm',
-        lg: 'h-12 px-7 text-base',
-        icon: 'h-10 w-10',
+        default: 'h-11 px-6 py-2',
+        sm: 'h-10 px-4 text-sm',
+        lg: 'h-12 px-8 text-base',
+        icon: 'h-11 w-11',
       },
     },
     defaultVariants: {

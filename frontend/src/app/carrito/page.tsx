@@ -103,17 +103,18 @@ export default function CartPage() {
 
   if (!mounted) {
     return (
-      <div className="container-page py-10">
-        <h1 className="text-3xl font-semibold">Carrito</h1>
-        <p className="mt-4 text-sm text-muted-foreground">Cargando…</p>
+      <div className="container-page py-10 sm:py-14">
+        <h1 className="text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Carrito</h1>
+        <p className="mt-4 text-sm text-muted-foreground" role="status">Cargando…</p>
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="container-page py-20 text-center">
-        <h1 className="text-3xl font-semibold">Tu carrito está vacío</h1>
+      <div className="container-page py-24 text-center">
+        <p className="eyebrow">Carrito</p>
+        <h1 className="mt-2 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Tu carrito está vacío</h1>
         <p className="mt-2 text-muted-foreground">
           Explorá el catálogo y sumá tus primeros objetos.
         </p>
@@ -128,24 +129,25 @@ export default function CartPage() {
   const canContinue = validation?.valid === true && !validating;
 
   return (
-    <div className="container-page py-10">
-      <h1 className="text-3xl font-semibold">Tu carrito</h1>
+    <div className="container-page py-10 sm:py-14">
+      <p className="eyebrow">Carrito</p>
+      <h1 className="mt-1 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Tu carrito</h1>
 
       {hasIssues && (
-        <div className="mt-4 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+        <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
           Revisá los ítems marcados antes de continuar con la compra.
         </div>
       )}
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
+      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px] lg:items-start">
         <ul className="space-y-4">
           {items.map((item) => {
             const result = issueFor(item.productId);
 
             return (
-              <li key={item.productId} className="rounded-lg border bg-card p-4">
+              <li key={item.productId} className="rounded-lg border bg-card p-4 shadow-sm sm:p-5">
                 <div className="flex gap-4">
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md bg-secondary">
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md bg-secondary sm:h-24 sm:w-24">
                     {item.image ? (
                       <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
                     ) : null}
@@ -153,13 +155,13 @@ export default function CartPage() {
 
                   <div className="flex flex-1 flex-col justify-between gap-2">
                     <div className="flex items-start justify-between gap-3">
-                      <Link href={`/producto/${item.slug}`} className="font-medium hover:underline">
+                      <Link href={`/producto/${item.slug}`} className="font-display font-medium leading-snug underline-offset-4 hover:underline">
                         {item.name}
                       </Link>
                       <button
                         type="button"
                         onClick={() => setPendingRemove(item)}
-                        className="text-muted-foreground hover:text-destructive"
+                        className="-m-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         aria-label={`Quitar ${item.name}`}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -167,29 +169,29 @@ export default function CartPage() {
                     </div>
 
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div className="inline-flex items-center rounded-md border">
+                      <div className="inline-flex items-center rounded-full border bg-card">
                         <button
                           type="button"
                           onClick={() => setQuantity(item.productId, item.quantity - 1)}
                           disabled={item.quantity <= 1}
-                          className="flex h-8 w-8 items-center justify-center disabled:opacity-40"
+                          className="flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40 disabled:hover:bg-transparent"
                           aria-label="Restar una unidad"
                         >
                           <Minus className="h-3.5 w-3.5" />
                         </button>
-                        <span className="w-8 text-center text-sm">{item.quantity}</span>
+                        <span className="w-8 text-center font-mono text-sm tabular-nums">{item.quantity}</span>
                         <button
                           type="button"
                           onClick={() => setQuantity(item.productId, item.quantity + 1)}
                           disabled={item.quantity >= item.stock}
-                          className="flex h-8 w-8 items-center justify-center disabled:opacity-40"
+                          className="flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40 disabled:hover:bg-transparent"
                           aria-label="Sumar una unidad"
                         >
                           <Plus className="h-3.5 w-3.5" />
                         </button>
                       </div>
 
-                      <p className="text-sm font-semibold">
+                      <p className="font-display text-base font-medium tabular-nums">
                         {formatPrice(Number(item.price) * item.quantity)}
                       </p>
                     </div>
@@ -197,7 +199,7 @@ export default function CartPage() {
                 </div>
 
                 {result?.issue && (
-                  <p className="mt-3 rounded-md bg-destructive/5 px-3 py-2 text-xs text-destructive">
+                  <p role="alert" className="mt-3 rounded-md bg-destructive/5 px-3 py-2 text-sm text-destructive">
                     {ISSUE_MESSAGES[result.issue]}
                   </p>
                 )}
@@ -206,24 +208,26 @@ export default function CartPage() {
           })}
         </ul>
 
-        <aside className="h-fit rounded-lg border bg-card p-6">
-          <h2 className="text-lg font-semibold">Resumen</h2>
-          <div className="mt-4 flex items-center justify-between text-sm">
+        <aside className="h-fit rounded-xl border bg-card p-6 shadow-sm lg:sticky lg:top-24">
+          <p className="eyebrow">Pedido</p>
+          <h2 className="mt-1 font-display text-xl font-medium tracking-tight">Resumen</h2>
+          <div className="mt-5 flex items-center justify-between border-t pt-5 text-sm">
             <span className="text-muted-foreground">Total</span>
-            <span className="text-lg font-semibold">{formatPrice(total)}</span>
+            <span className="font-display text-2xl font-medium tabular-nums tracking-tight">{formatPrice(total)}</span>
           </div>
 
           {validating && (
-            <p className="mt-3 text-xs text-muted-foreground">Validando stock y precios…</p>
+            <p role="status" className="mt-3 text-sm text-muted-foreground">Validando stock y precios…</p>
           )}
 
           {hasIssues && (
-            <p className="mt-3 text-xs text-destructive">
+            <p className="mt-3 text-sm text-destructive">
               Corregí los ítems marcados para poder continuar.
             </p>
           )}
 
           <Button
+            size="lg"
             className="mt-5 w-full"
             disabled={!canContinue}
             onClick={() => router.push('/checkout')}

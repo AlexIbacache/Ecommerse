@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 export default function NotFound() {
   return (
     <div className="container-page py-24 text-center">
-      <h1 className="text-3xl font-semibold">Producto no encontrado</h1>
+      <p className="eyebrow">Error 404</p>
+      <h1 className="text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Producto no encontrado</h1>
       <p className="mt-2 text-muted-foreground">
         Puede que ya no esté disponible o que el enlace sea incorrecto.
       </p>

@@ -105,8 +105,9 @@ export function CommentsSection({ productId }: { productId: number }) {
   }
 
   return (
-    <section className="mt-14 border-t pt-8">
-      <h2 className="text-xl font-semibold">
+    <section className="mt-16 border-t pt-10">
+      <p className="eyebrow">Opiniones</p>
+      <h2 className="mt-1 text-2xl font-normal tracking-[-0.02em] sm:text-3xl">
         Comentarios {totalItems > 0 ? `(${totalItems})` : ''}
       </h2>
 
@@ -144,12 +145,12 @@ export function CommentsSection({ productId }: { productId: number }) {
                   <p className="text-sm font-semibold">
                     {comment.authorName}
                     {comment.isAnonymous && (
-                      <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                      <span className="ml-2 rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
                         visitante
                       </span>
                     )}
                   </p>
-                  <time className="text-xs text-muted-foreground">
+                  <time className="font-mono text-xs text-muted-foreground">
                     {formatDate(comment.createdAt)}
                   </time>
                 </div>
@@ -186,8 +187,8 @@ export function CommentsSection({ productId }: { productId: number }) {
         )}
       </div>
 
-      <form className="mt-8 space-y-3 rounded-lg border bg-card p-5" onSubmit={submit}>
-        <h3 className="text-base font-semibold">Dejá tu comentario</h3>
+      <form className="mt-8 space-y-3 rounded-xl border bg-card p-5 shadow-sm sm:p-6" onSubmit={submit}>
+        <h3 className="font-display text-lg font-medium tracking-tight">Dejá tu comentario</h3>
 
         {status === 'authenticated' && user ? (
           <p className="text-sm text-muted-foreground">
@@ -199,7 +200,7 @@ export function CommentsSection({ productId }: { productId: number }) {
             onChange={(event) => setGuestName(event.target.value)}
             placeholder="Tu nombre (visible públicamente)"
             aria-label="Tu nombre"
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm sm:max-w-xs"
+            className="h-11 w-full rounded-md border border-input bg-card px-3.5 text-base transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/80 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm sm:max-w-xs"
           />
         )}
 
@@ -209,12 +210,16 @@ export function CommentsSection({ productId }: { productId: number }) {
           placeholder="Contanos tu experiencia con este producto…"
           aria-label="Comentario"
           rows={4}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          className="py-2.5 w-full rounded-md border border-input bg-card px-3.5 text-base transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/80 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
         />
 
-        {fieldError && <p className="text-xs text-destructive">{fieldError}</p>}
+        {fieldError && (
+          <p role="alert" className="text-sm text-destructive">
+            {fieldError}
+          </p>
+        )}
 
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
             Los comentarios se publican como texto plano.
           </p>

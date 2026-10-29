@@ -1,10 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Menu, Search, ShoppingBag, UserRound } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Sheet,
   SheetContent,
@@ -17,8 +25,10 @@ import { useCartStore } from '@/stores/cart-store';
 
 export function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [search, setSearch] = useState('');
+  const [confirmLogout, setConfirmLogout] = useState(false);
 
   const user = useAuthStore((state) => state.user);
   const status = useAuthStore((state) => state.status);
@@ -37,39 +47,45 @@ export function Header() {
 
   async function handleLogout() {
     await logout();
+    setConfirmLogout(false);
+    toast.success('Cerraste sesión');
     router.push('/');
   }
 
   const accountLinks =
     status === 'authenticated' && user ? (
       <>
-        <Link href="/cuenta" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-          <UserRound className="h-4 w-4" />
-          {user.name}
+        <Link
+          href="/cuenta"
+          aria-label={`Mi cuenta (${user.name})`}
+          className="flex h-11 items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <UserRound className="h-5 w-5 sm:h-4 sm:w-4" />
+          <span className="hidden max-w-32 truncate sm:inline">{user.name}</span>
         </Link>
         {user.role === 'ADMINISTRADOR' && (
-          <Link href="/admin" className="text-sm text-muted-foreground hover:text-foreground">
+          <Link href="/admin" className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline">
             Panel
           </Link>
         )}
         <button
           type="button"
-          onClick={handleLogout}
-          className="text-sm text-muted-foreground hover:text-foreground"
+          onClick={() => setConfirmLogout(true)}
+          className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline"
         >
           Salir
         </button>
       </>
     ) : (
-      <Link href="/login" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+      <Link href="/login" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
         <UserRound className="h-4 w-4" />
         Ingresar
       </Link>
     );
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
-      <div className="container-page flex h-16 items-center gap-4">
+    <header className="dark sticky top-0 z-40 border-b bg-background/95 text-foreground shadow-md backdrop-blur-md">
+      <div className="container-page flex h-16 items-center gap-3 sm:gap-4">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menú">
@@ -78,9 +94,9 @@ export function Header() {
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
-              <SheetTitle>Terral</SheetTitle>
+              <SheetTitle>terral</SheetTitle>
             </SheetHeader>
-            <nav className="mt-8 flex flex-col gap-4 text-base">
+            <nav className="mt-8 flex flex-col gap-1 text-base [&>a]:flex [&>a]:min-h-11 [&>a]:items-center [&>a]:rounded-md [&>a]:px-2 [&>a:hover]:bg-secondary">
               <Link href="/">Inicio</Link>
               <Link href="/productos">Productos</Link>
               <Link href="/carrito" className="flex items-center gap-2">
@@ -88,7 +104,20 @@ export function Header() {
                 Carrito {mounted && cartCount > 0 ? `(${cartCount})` : ''}
               </Link>
               <Link href="/cuenta">Mi cuenta</Link>
-              <Link href="/login">Ingresar</Link>
+              {status === 'authenticated' && user ? (
+                <>
+                  {user.role === 'ADMINISTRADOR' && <Link href="/admin">Panel</Link>}
+                  <button
+                    type="button"
+                    onClick={() => setConfirmLogout(true)}
+                    className="flex min-h-11 items-center rounded-md px-2 text-left hover:bg-secondary"
+                  >
+                    Salir
+                  </button>
+                </>
+              ) : (
+                <Link href="/login">Ingresar</Link>
+              )}
             </nav>
             <form onSubmit={submitSearch} className="mt-6 flex gap-2">
               <input
@@ -96,7 +125,7 @@ export function Header() {
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Buscar…"
                 aria-label="Buscar productos"
-                className="h-10 w-full rounded-md border border-input bg-card px-3 text-sm"
+                className="h-11 w-full rounded-full border border-input bg-card px-4 text-base focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
               />
               <Button type="submit" size="icon" aria-label="Buscar">
                 <Search className="h-4 w-4" />
@@ -105,49 +134,79 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-        <Link href="/" className="font-display text-xl font-semibold tracking-tight">
-          Terral
+        <Link href="/" className="flex items-center gap-2 rounded-sm font-display text-xl font-medium tracking-[-0.03em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-cyan-glow" />
+          terral
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm md:flex">
-          <Link href="/" className="text-muted-foreground hover:text-foreground">
-            Inicio
-          </Link>
-          <Link href="/productos" className="text-muted-foreground hover:text-foreground">
-            Productos
-          </Link>
+        <nav aria-label="Principal" className="hidden items-center gap-1 text-sm md:flex">
+          {[
+            { href: '/', label: 'Inicio', active: pathname === '/' },
+            { href: '/productos', label: 'Productos', active: pathname.startsWith('/productos') || pathname.startsWith('/producto/') },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={item.active ? 'page' : undefined}
+              className={`inline-flex h-10 items-center rounded-full px-4 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                item.active ? 'bg-accent/10 text-accent' : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
-        <form onSubmit={submitSearch} className="ml-auto hidden w-64 items-center md:flex">
+        <form onSubmit={submitSearch} className="ml-auto hidden w-44 items-center md:flex lg:w-72">
           <div className="relative w-full">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Buscar…"
               aria-label="Buscar productos"
-              className="h-9 w-full rounded-md border border-input bg-card pl-9 pr-3 text-sm"
+              className="h-10 w-full rounded-full border border-input bg-card pl-10 pr-4 text-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             />
           </div>
         </form>
 
-        <div className="ml-auto flex items-center gap-5 md:ml-4">
+        <div className="ml-auto flex items-center gap-3 sm:gap-4 md:ml-4">
           <Link
             href="/carrito"
-            className="relative flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+            className="relative flex h-11 items-center gap-2 rounded-full border border-input/60 bg-card px-3 text-sm font-medium text-foreground transition-colors hover:border-accent hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4"
             aria-label="Carrito"
           >
-            <ShoppingBag className="h-5 w-5" />
+            <span className="relative flex h-5 w-5 items-center justify-center">
+              <ShoppingBag className="h-5 w-5" />
+              {mounted && cartCount > 0 && (
+                <span className="absolute -right-3 -top-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 font-mono text-[11px] font-medium text-accent-foreground">
+                  {cartCount}
+                </span>
+              )}
+            </span>
             <span className="hidden sm:inline">Carrito</span>
-            {mounted && cartCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[11px] font-bold text-accent-foreground">
-                {cartCount}
-              </span>
-            )}
           </Link>
           {accountLinks}
         </div>
       </div>
+      <Dialog open={confirmLogout} onOpenChange={setConfirmLogout}>
+        <DialogContent>
+          <DialogTitle>¿Cerrar sesión?</DialogTitle>
+          <DialogDescription>
+            Vas a salir de tu cuenta{user ? ` (${user.name})` : ''}. Tu carrito se mantiene en este dispositivo.
+          </DialogDescription>
+          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Cancelar
+              </Button>
+            </DialogClose>
+            <Button type="button" onClick={handleLogout}>
+              Sí, salir
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }

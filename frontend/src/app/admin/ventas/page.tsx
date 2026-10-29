@@ -8,12 +8,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { adminOrdersApi, type AdminOrderSummary } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
 
-type BadgeVariant = 'default' | 'accent' | 'outline' | 'muted';
+type BadgeVariant = 'default' | 'accent' | 'outline' | 'muted' | 'success' | 'warning' | 'destructive';
 
 const ORDER_STATUS: Record<string, { label: string; variant: BadgeVariant }> = {
-  PENDIENTE_PAGO: { label: 'Pendiente de pago', variant: 'muted' },
-  PAGADO: { label: 'Pagado', variant: 'default' },
-  PAGO_FALLIDO: { label: 'Pago fallido', variant: 'accent' },
+  PENDIENTE_PAGO: { label: 'Pendiente de pago', variant: 'warning' },
+  PAGADO: { label: 'Pagado', variant: 'success' },
+  PAGO_FALLIDO: { label: 'Pago fallido', variant: 'destructive' },
   CANCELADO: { label: 'Cancelado', variant: 'outline' },
 };
 
@@ -57,7 +57,7 @@ export default function AdminSalesPage() {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-xl font-semibold">Ventas</h2>
+      <h2 className="font-display text-2xl font-normal tracking-[-0.02em]">Ventas</h2>
 
       {loading ? (
         <div className="space-y-2">
@@ -66,7 +66,7 @@ export default function AdminSalesPage() {
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-lg border bg-card p-8 text-center">
+        <div className="rounded-xl border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">
             No pudimos cargar las ventas.
           </p>
@@ -75,13 +75,13 @@ export default function AdminSalesPage() {
           </Button>
         </div>
       ) : orders && orders.length === 0 ? (
-        <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-xl border bg-card p-8 text-center text-sm text-muted-foreground">
           Todavía no hay ventas registradas.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <table className="w-full min-w-[760px] text-sm">
-            <thead className="bg-secondary/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
+        <div className="overflow-x-auto rounded-xl border bg-card">
+          <table className="block w-full text-sm md:table md:min-w-[760px]">
+            <thead className="hidden bg-secondary text-left md:table-header-group font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">Pedido</th>
                 <th className="px-4 py-3">Cliente</th>
@@ -92,7 +92,7 @@ export default function AdminSalesPage() {
                 <th className="px-4 py-3 text-right">Detalle</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="block divide-y md:table-row-group">
               {(orders ?? []).map((order) => {
                 const status = ORDER_STATUS[order.status] ?? {
                   label: order.status,
@@ -100,29 +100,29 @@ export default function AdminSalesPage() {
                 };
 
                 return (
-                  <tr key={order.id}>
-                    <td className="px-4 py-3 font-medium">#{order.id}</td>
-                    <td className="px-4 py-3">
+                  <tr key={order.id} className="grid grid-cols-2 gap-x-4 gap-y-3 p-4 md:table-row md:p-0">
+                    <td data-label="Pedido" className="md:table-cell md:px-4 md:py-3 font-medium before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">#{order.id}</td>
+                    <td data-label="Cliente" className="md:table-cell md:px-4 md:py-3 before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
                       <p>{order.customerName}</p>
                       <p className="text-xs text-muted-foreground">
                         {order.customerEmail}
                       </p>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                    <td data-label="Fecha" className="md:table-cell md:px-4 md:py-3 text-muted-foreground before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
                       {formatDate(order.createdAt)}
                     </td>
-                    <td className="px-4 py-3 font-semibold">
+                    <td data-label="Total" className="md:table-cell md:px-4 md:py-3 font-display font-medium tabular-nums before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
                       {formatPrice(order.total)}
                     </td>
-                    <td className="px-4 py-3">
+                    <td data-label="Estado" className="md:table-cell md:px-4 md:py-3 before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
                       <Badge variant={status.variant}>{status.label}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                    <td data-label="Pago" className="md:table-cell md:px-4 md:py-3 text-muted-foreground before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
                       {order.paymentStatus
                         ? (PAYMENT_STATUS[order.paymentStatus] ?? order.paymentStatus)
                         : 'Sin pago'}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="col-span-2 text-right md:table-cell md:px-4 md:py-3 md:text-right">
                       <Button asChild variant="ghost" size="sm">
                         <Link href={`/admin/ventas/${order.id}`}>Ver</Link>
                       </Button>

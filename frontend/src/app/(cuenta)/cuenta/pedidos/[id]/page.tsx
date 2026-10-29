@@ -9,12 +9,12 @@ import { RequireAuth } from '@/components/require-auth';
 import { ApiError, ordersApi, type OrderDetail } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
 
-type BadgeVariant = 'default' | 'accent' | 'outline' | 'muted';
+type BadgeVariant = 'default' | 'accent' | 'outline' | 'muted' | 'success' | 'warning' | 'destructive';
 
 const ORDER_STATUS: Record<string, { label: string; variant: BadgeVariant }> = {
-  PENDIENTE_PAGO: { label: 'Pendiente de pago', variant: 'muted' },
-  PAGADO: { label: 'Pagado', variant: 'default' },
-  PAGO_FALLIDO: { label: 'Pago fallido', variant: 'accent' },
+  PENDIENTE_PAGO: { label: 'Pendiente de pago', variant: 'warning' },
+  PAGADO: { label: 'Pagado', variant: 'success' },
+  PAGO_FALLIDO: { label: 'Pago fallido', variant: 'destructive' },
   CANCELADO: { label: 'Cancelado', variant: 'outline' },
 };
 
@@ -63,16 +63,17 @@ function OrderContent() {
 
   if (loading) {
     return (
-      <div className="container-page py-16">
-        <p className="text-sm text-muted-foreground">Cargando pedido…</p>
+      <div className="container-page py-24" role="status">
+        <p className="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">Cargando pedido…</p>
       </div>
     );
   }
 
   if (notFound || !order) {
     return (
-      <div className="container-page py-16 text-center">
-        <h1 className="text-2xl font-semibold">Pedido no encontrado</h1>
+      <div className="container-page py-24 text-center">
+        <p className="eyebrow">Error</p>
+        <h1 className="mt-2 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Pedido no encontrado</h1>
         <Button asChild className="mt-6">
           <Link href="/cuenta">Volver a mi cuenta</Link>
         </Button>
@@ -86,32 +87,32 @@ function OrderContent() {
   };
 
   return (
-    <div className="container-page max-w-3xl py-10">
-      <Link href="/cuenta" className="text-sm text-muted-foreground hover:text-foreground">
+    <div className="container-page max-w-3xl py-10 sm:py-14">
+      <Link href="/cuenta" className="inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-foreground">
         ← Volver a mi cuenta
       </Link>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-semibold">Pedido #{order.id}</h1>
+        <h1 className="text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Pedido #{order.id}</h1>
         <Badge variant={status.variant}>{status.label}</Badge>
       </div>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="mt-2 font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">
         {formatDate(order.createdAt)}
       </p>
 
-      <div className="mt-6 overflow-hidden rounded-lg border bg-card">
+      <div className="mt-6 overflow-hidden rounded-xl border bg-card shadow-sm">
         <ul className="divide-y">
           {order.items.map((item) => (
             <li key={item.productId} className="flex items-center justify-between gap-3 p-4">
               <div>
-                <Link href={`/producto/${item.slug}`} className="font-medium hover:underline">
+                <Link href={`/producto/${item.slug}`} className="font-display font-medium underline-offset-4 hover:underline">
                   {item.name}
                 </Link>
-                <p className="text-xs text-muted-foreground">
+                <p className="font-mono text-xs text-muted-foreground">
                   {item.quantity} × {formatPrice(item.unitPrice)}
                 </p>
               </div>
-              <span className="text-sm font-semibold">
+              <span className="font-display font-medium tabular-nums">
                 {formatPrice(Number(item.unitPrice) * item.quantity)}
               </span>
             </li>
@@ -119,11 +120,11 @@ function OrderContent() {
         </ul>
         <div className="flex items-center justify-between border-t p-4">
           <span className="font-medium">Total</span>
-          <span className="text-lg font-semibold">{formatPrice(order.total)}</span>
+          <span className="font-display text-2xl font-medium tabular-nums tracking-tight">{formatPrice(order.total)}</span>
         </div>
       </div>
 
-      <div className="mt-4 rounded-lg border bg-card p-4 text-sm">
+      <div className="mt-4 rounded-lg border bg-card p-5 text-sm">
         <p>
           <span className="text-muted-foreground">Estado del pedido: </span>
           {ORDER_STATUS[order.status]?.label ?? order.status}
@@ -133,7 +134,7 @@ function OrderContent() {
           {PAYMENT_STATUS[order.payment?.status ?? ''] ?? 'Sin pago'}
         </p>
         {order.payment?.paypalOrderId && (
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-2 break-all font-mono text-xs text-muted-foreground">
             Transacción PayPal: {order.payment.paypalOrderId}
           </p>
         )}

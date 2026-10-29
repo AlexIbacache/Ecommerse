@@ -6,7 +6,7 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: '1.5rem',
+      padding: '1rem',
       screens: { '2xl': '1200px' },
     },
     extend: {
@@ -44,18 +44,39 @@ const config: Config = {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))',
         },
+        success: 'hsl(var(--success))',
+        warning: 'hsl(var(--warning))',
+        navy: {
+          800: '#0A1628',
+          900: '#050B1A',
+        },
+        cyan: {
+          glow: '#06B6D4',
+        },
       },
       borderColor: {
         DEFAULT: 'hsl(var(--border))',
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        sm: 'calc(var(--radius) - 8px)', // 8
+        md: 'calc(var(--radius) - 4px)', // 12
+        lg: 'var(--radius)', // 16
+        xl: '1.5rem', // 24
+        '2xl': '2rem', // 32
+      },
+      boxShadow: {
+        sm: '0 1px 2px rgba(10, 22, 40, 0.06)',
+        md: '0 8px 24px -10px rgba(10, 22, 40, 0.14)',
+        lg: '0 24px 56px -20px rgba(10, 22, 40, 0.28)',
+        glow: '0 0 0 1px rgba(6, 182, 212, 0.35), 0 0 48px -8px rgba(6, 182, 212, 0.35)',
       },
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-display)', 'Georgia', 'serif'],
+        display: ['var(--font-display)', 'var(--font-sans)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
+      },
+      transitionTimingFunction: {
+        out: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
       },
       keyframes: {
         'fade-up': {
@@ -64,7 +85,7 @@ const config: Config = {
         },
       },
       animation: {
-        'fade-up': 'fade-up 0.35s ease-out both',
+        'fade-up': 'fade-up 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both',
       },
     },
   },

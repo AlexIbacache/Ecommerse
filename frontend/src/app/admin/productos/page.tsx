@@ -239,14 +239,14 @@ export default function AdminProductsPage() {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold">Productos</h2>
+        <h2 className="font-display text-2xl font-normal tracking-[-0.02em]">Productos</h2>
         <Button onClick={openCreate}>
           <Plus className="h-4 w-4" />
           Nuevo producto
         </Button>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 md:flex-row md:items-center">
+      <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 md:flex-row md:items-center">
         <Input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
@@ -302,7 +302,7 @@ export default function AdminProductsPage() {
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-lg border bg-card p-8 text-center">
+        <div className="rounded-xl border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">
             No pudimos cargar los productos.
           </p>
@@ -311,15 +311,15 @@ export default function AdminProductsPage() {
           </Button>
         </div>
       ) : products && products.length === 0 ? (
-        <div className="rounded-lg border bg-card p-8 text-center">
+        <div className="rounded-xl border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">
             No hay productos que coincidan con los filtros.
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <table className="w-full min-w-[640px] text-sm">
-            <thead className="bg-secondary/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
+        <div className="overflow-x-auto rounded-xl border bg-card">
+          <table className="block w-full text-sm md:table md:min-w-[640px]">
+            <thead className="hidden bg-secondary text-left md:table-header-group font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">Producto</th>
                 <th className="px-4 py-3">Precio</th>
@@ -328,25 +328,25 @@ export default function AdminProductsPage() {
                 <th className="px-4 py-3 text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="block divide-y md:table-row-group">
               {(products ?? []).map((product) => (
-                <tr key={product.id}>
-                  <td className="px-4 py-3">
+                <tr key={product.id} className="grid grid-cols-2 gap-x-4 gap-y-3 p-4 md:table-row md:p-0">
+                  <td className="col-span-2 md:table-cell md:px-4 md:py-3">
                     <p className="font-medium">{product.name}</p>
                     <p className="text-xs text-muted-foreground">
                       {product.category.name}
                     </p>
                   </td>
-                  <td className="px-4 py-3">{formatPrice(product.price)}</td>
-                  <td className="px-4 py-3">{product.stock}</td>
-                  <td className="px-4 py-3">
+                  <td data-label="Precio" className="md:table-cell md:px-4 md:py-3 font-display font-medium tabular-nums before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">{formatPrice(product.price)}</td>
+                  <td data-label="Stock" className="md:table-cell md:px-4 md:py-3 font-mono tabular-nums before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">{product.stock}</td>
+                  <td data-label="Estado" className="md:table-cell md:px-4 md:py-3 before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
                     <Badge
                       variant={
                         !product.isActive
                           ? 'outline'
                           : product.stock === 0
-                            ? 'accent'
-                            : 'muted'
+                            ? 'destructive'
+                            : 'success'
                       }
                     >
                       {!product.isActive
@@ -356,7 +356,7 @@ export default function AdminProductsPage() {
                           : 'Disponible'}
                     </Badge>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="col-span-2 md:table-cell md:px-4 md:py-3">
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="ghost"
@@ -454,7 +454,7 @@ export default function AdminProductsPage() {
                       description: event.target.value,
                     }))
                   }
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  className="w-full rounded-md border border-input bg-card px-3.5 py-2.5 text-base transition-[border-color,box-shadow] duration-200 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
                 />
                 {formErrors.description && (
                   <p className="text-xs text-destructive">{formErrors.description}</p>
@@ -536,7 +536,7 @@ export default function AdminProductsPage() {
                     }))
                   }
                   placeholder="https://picsum.photos/seed/producto/800/800"
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-xs"
+                  className="w-full rounded-md border border-input bg-card px-3.5 py-2.5 text-base transition-[border-color,box-shadow] duration-200 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm font-mono"
                 />
                 {formErrors.images && (
                   <p className="text-xs text-destructive">{formErrors.images}</p>

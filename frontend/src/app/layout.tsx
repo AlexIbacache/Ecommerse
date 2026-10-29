@@ -1,14 +1,20 @@
 import type { Metadata } from 'next';
-import { Fraunces, Inter } from 'next/font/google';
+import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/components/auth-provider';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 import './globals.css';
 
-const display = Fraunces({
+const display = Geist({
   subsets: ['latin'],
   variable: '--font-display',
+  display: 'swap',
+});
+
+const mono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
@@ -32,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={`${display.variable} ${sans.variable}`}>
+    <html lang="es" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="flex min-h-screen flex-col">
         <AuthProvider>
           <Header />

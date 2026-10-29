@@ -8,12 +8,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { adminApi, type AdminMetrics } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
 
-type BadgeVariant = 'default' | 'accent' | 'outline' | 'muted';
+type BadgeVariant = 'default' | 'accent' | 'outline' | 'muted' | 'success' | 'warning' | 'destructive';
 
 const STATUS_META: Record<string, { label: string; variant: BadgeVariant }> = {
-  PENDIENTE_PAGO: { label: 'Pendiente de pago', variant: 'muted' },
-  PAGADO: { label: 'Pagado', variant: 'default' },
-  PAGO_FALLIDO: { label: 'Pago fallido', variant: 'accent' },
+  PENDIENTE_PAGO: { label: 'Pendiente de pago', variant: 'warning' },
+  PAGADO: { label: 'Pagado', variant: 'success' },
+  PAGO_FALLIDO: { label: 'Pago fallido', variant: 'destructive' },
   CANCELADO: { label: 'Cancelado', variant: 'outline' },
 };
 
@@ -40,12 +40,12 @@ function MetricCard({
   value: string | number;
 }) {
   return (
-    <div className="rounded-lg border bg-card p-5">
+    <div className="rounded-xl border bg-card p-5 shadow-sm transition-[border-color,box-shadow] duration-200 hover:border-accent/50 hover:shadow-glow motion-reduce:transition-none">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+        <p className="font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
+        <Icon className="h-4 w-4 text-accent" aria-hidden="true" />
       </div>
-      <p className="mt-2 text-2xl font-semibold">{value}</p>
+      <p className="mt-3 font-display text-4xl font-normal tabular-nums tracking-[-0.03em]">{value}</p>
     </div>
   );
 }
@@ -90,8 +90,8 @@ export default function AdminDashboardPage() {
 
   if (error || !metrics) {
     return (
-      <div className="rounded-lg border bg-card p-8 text-center">
-        <p className="text-sm text-muted-foreground">
+      <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
+        <p className="text-sm text-destructive">
           No pudimos cargar las métricas.
         </p>
         <Button className="mt-4" onClick={load}>
@@ -126,9 +126,9 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-        <section className="rounded-lg border bg-card">
+        <section className="rounded-xl border bg-card">
           <header className="border-b px-5 py-4">
-            <h2 className="font-semibold">Pedidos recientes</h2>
+            <h2 className="font-display text-lg font-medium tracking-tight">Pedidos recientes</h2>
           </header>
           <ul className="divide-y">
             {metrics.recentOrders.length === 0 ? (
@@ -145,19 +145,19 @@ export default function AdminDashboardPage() {
                 return (
                   <li
                     key={order.id}
-                    className="flex items-center justify-between gap-3 px-5 py-3 text-sm"
+                    className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-5 py-3 text-sm"
                   >
                     <div>
                       <p className="font-medium">
                         #{order.id} · {order.customerName}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="font-mono text-xs text-muted-foreground">
                         {formatDate(order.createdAt)}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
                       <Badge variant={status.variant}>{status.label}</Badge>
-                      <span className="font-semibold">{formatPrice(order.total)}</span>
+                      <span className="font-display font-medium tabular-nums">{formatPrice(order.total)}</span>
                     </div>
                   </li>
                 );
@@ -166,9 +166,9 @@ export default function AdminDashboardPage() {
           </ul>
         </section>
 
-        <section className="rounded-lg border bg-card">
+        <section className="rounded-xl border bg-card">
           <header className="border-b px-5 py-4">
-            <h2 className="font-semibold">Bajo stock</h2>
+            <h2 className="font-display text-lg font-medium tracking-tight">Bajo stock</h2>
           </header>
           <ul className="divide-y">
             {metrics.lowStock.length === 0 ? (
@@ -182,7 +182,7 @@ export default function AdminDashboardPage() {
                   className="flex items-center justify-between gap-3 px-5 py-3 text-sm"
                 >
                   <span>{product.name}</span>
-                  <Badge variant={product.stock === 0 ? 'accent' : 'muted'}>
+                  <Badge variant={product.stock === 0 ? 'destructive' : 'warning'}>
                     {product.stock} u.
                   </Badge>
                 </li>
@@ -192,18 +192,18 @@ export default function AdminDashboardPage() {
         </section>
       </div>
 
-      <section className="rounded-lg border bg-card p-5">
-        <h2 className="font-semibold">Distribución de pedidos por estado</h2>
+      <section className="rounded-xl border bg-card p-5">
+        <h2 className="font-display text-lg font-medium tracking-tight">Distribución de pedidos por estado</h2>
         <div className="mt-4 space-y-3">
           {distribution.map((entry) => (
             <div key={entry.status}>
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center justify-between text-sm">
                 <span>{STATUS_META[entry.status]?.label ?? entry.status}</span>
-                <span className="text-muted-foreground">{entry.count}</span>
+                <span className="font-mono text-muted-foreground">{entry.count}</span>
               </div>
               <div className="mt-1 h-2 w-full rounded-full bg-secondary">
                 <div
-                  className="h-2 rounded-full bg-primary"
+                  className="h-2 rounded-full bg-primary transition-[width] duration-300 ease-out motion-reduce:transition-none"
                   style={{ width: `${(entry.count / maxCount) * 100}%` }}
                 />
               </div>

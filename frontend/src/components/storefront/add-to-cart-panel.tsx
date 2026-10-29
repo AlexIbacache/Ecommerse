@@ -37,28 +37,28 @@ export function AddToCartPanel({ product }: { product: ProductDetail }) {
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         <span className="text-sm font-medium">Cantidad</span>
-        <div className="inline-flex items-center rounded-md border">
+        <div className="inline-flex items-center rounded-full border bg-card">
           <button
             type="button"
             onClick={() => change(-1)}
             disabled={disabled || quantity <= 1}
-            className="flex h-10 w-10 items-center justify-center disabled:opacity-40"
+            className="flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40 disabled:hover:bg-transparent"
             aria-label="Restar una unidad"
           >
             <Minus className="h-4 w-4" />
           </button>
-          <span className="w-10 text-center text-sm font-semibold">{quantity}</span>
+          <span className="w-10 text-center font-mono text-sm font-medium tabular-nums" aria-live="polite">{quantity}</span>
           <button
             type="button"
             onClick={() => change(1)}
             disabled={disabled || quantity >= max}
-            className="flex h-10 w-10 items-center justify-center disabled:opacity-40"
+            className="flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40 disabled:hover:bg-transparent"
             aria-label="Sumar una unidad"
           >
             <Plus className="h-4 w-4" />
           </button>
         </div>
-        <span className="text-xs text-muted-foreground">
+        <span className="font-mono text-xs text-muted-foreground">
           {product.stock} disponibles
         </span>
       </div>

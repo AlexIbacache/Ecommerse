@@ -14,7 +14,7 @@ export function ProductGallery({
 
   if (images.length === 0) {
     return (
-      <div className="flex aspect-square items-center justify-center rounded-lg border bg-secondary text-sm text-muted-foreground">
+      <div className="flex aspect-square items-center justify-center rounded-xl border bg-secondary text-sm text-muted-foreground">
         Sin imagen
       </div>
     );
@@ -22,7 +22,7 @@ export function ProductGallery({
 
   return (
     <div className="space-y-3">
-      <div className="aspect-square overflow-hidden rounded-lg border bg-secondary">
+      <div className="aspect-square overflow-hidden rounded-xl border bg-secondary shadow-sm">
         <img
           src={images[active].url}
           alt={name}
@@ -39,8 +39,8 @@ export function ProductGallery({
               onClick={() => setActive(index)}
               aria-label={`Ver imagen ${index + 1}`}
               className={cn(
-                'h-16 w-16 shrink-0 overflow-hidden rounded-md border-2 transition-colors',
-                index === active ? 'border-primary' : 'border-transparent hover:border-border',
+                'h-16 w-16 shrink-0 overflow-hidden rounded-md border-2 transition-[border-color,opacity] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                index === active ? 'border-accent' : 'border-transparent opacity-70 hover:opacity-100',
               )}
             >
               <img src={image.url} alt="" className="h-full w-full object-cover" />

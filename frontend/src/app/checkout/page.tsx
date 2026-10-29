@@ -148,8 +148,9 @@ function CheckoutContent() {
 
   if (items.length === 0) {
     return (
-      <div className="container-page py-20 text-center">
-        <h1 className="text-3xl font-semibold">Tu carrito está vacío</h1>
+      <div className="container-page py-24 text-center">
+        <p className="eyebrow">Checkout</p>
+        <h1 className="mt-2 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Tu carrito está vacío</h1>
         <p className="mt-2 text-muted-foreground">Agregá productos antes de continuar.</p>
         <Button asChild className="mt-6">
           <Link href="/productos">Ver catálogo</Link>
@@ -161,12 +162,13 @@ function CheckoutContent() {
   const hasIssues = validation !== null && !validation.valid;
 
   return (
-    <div className="container-page max-w-2xl py-10">
-      <h1 className="text-3xl font-semibold">Revisá tu compra</h1>
+    <div className="container-page max-w-2xl py-10 sm:py-14">
+      <p className="eyebrow">Checkout</p>
+      <h1 className="mt-1 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Revisá tu compra</h1>
 
       <div className="mt-8 space-y-5">
-        <div className="rounded-lg border bg-card p-5">
-          <h2 className="text-lg font-semibold">Resumen</h2>
+        <div className="rounded-xl border bg-card p-5 shadow-sm sm:p-6">
+          <h2 className="font-display text-xl font-medium tracking-tight">Resumen</h2>
           <ul className="mt-4 space-y-3">
             {items.map((item) => (
               <li
@@ -176,7 +178,7 @@ function CheckoutContent() {
                 <span>
                   {item.quantity} × {item.name}
                 </span>
-                <span className="font-medium">
+                <span className="font-display font-medium tabular-nums">
                   {formatPrice(Number(item.price) * item.quantity)}
                 </span>
               </li>
@@ -184,12 +186,12 @@ function CheckoutContent() {
           </ul>
           <div className="mt-4 flex items-center justify-between border-t pt-4">
             <span className="font-medium">Total</span>
-            <span className="text-xl font-semibold">{formatPrice(total)}</span>
+            <span className="font-display text-2xl font-medium tabular-nums tracking-tight">{formatPrice(total)}</span>
           </div>
         </div>
 
         {hasIssues && (
-          <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+          <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
             Hay productos no disponibles o sin stock.{' '}
             <Link href="/carrito" className="underline">
               Volvé al carrito
@@ -199,8 +201,8 @@ function CheckoutContent() {
         )}
 
         {paypal ? (
-          <div className="rounded-lg border bg-card p-5">
-            <h2 className="text-lg font-semibold">Completá el pago</h2>
+          <div className="rounded-xl border bg-card p-5 shadow-sm sm:p-6">
+            <h2 className="font-display text-xl font-medium tracking-tight">Completá el pago</h2>
             <p className="mb-4 mt-1 text-sm text-muted-foreground">
               Se abrirá PayPal Sandbox para confirmar el pago de{' '}
               {formatPrice(total)}.

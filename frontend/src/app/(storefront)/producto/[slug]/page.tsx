@@ -21,42 +21,42 @@ export default async function ProductPage({
   }
 
   return (
-    <div className="container-page py-10">
-      <nav className="mb-6 text-sm text-muted-foreground">
-        <Link href="/productos" className="hover:text-foreground">
+    <div className="container-page py-10 sm:py-14">
+      <nav aria-label="Migas de pan" className="mb-8 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
+        <Link href="/productos" className="transition-colors hover:text-foreground">
           Catálogo
         </Link>
         <span> / </span>
         <span>{product.category.name}</span>
       </nav>
 
-      <div className="grid gap-10 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-14">
         <FadeIn>
           <ProductGallery images={product.images} name={product.name} />
         </FadeIn>
 
         <FadeIn delay={0.05}>
-          <div className="space-y-5">
+          <div className="space-y-6 lg:pt-2">
             <div className="space-y-2">
               <p className="eyebrow">{product.category.name}</p>
-              <h1 className="text-3xl font-semibold sm:text-4xl">{product.name}</h1>
+              <h1 className="text-3xl font-normal leading-[1.1] tracking-[-0.03em] sm:text-4xl lg:text-5xl">{product.name}</h1>
               <div className="flex flex-wrap items-center gap-3">
-                <p className="text-2xl font-semibold">{formatPrice(product.price)}</p>
+                <p className="font-display text-3xl font-medium tabular-nums tracking-[-0.02em]">{formatPrice(product.price)}</p>
                 {product.available ? (
-                  <Badge variant="muted">Disponible</Badge>
+                  <Badge variant="success">Disponible</Badge>
                 ) : (
                   <Badge variant="outline">Agotado</Badge>
                 )}
               </div>
             </div>
 
-            <p className="text-muted-foreground">{product.description}</p>
+            <p className="leading-relaxed text-muted-foreground">{product.description}</p>
 
             <AddToCartPanel product={product} />
 
-            <div className="rounded-lg border bg-card p-4 text-sm text-muted-foreground">
-              <p className="font-medium text-foreground">Envío y garantía</p>
-              <p className="mt-1">
+            <div className="rounded-lg border bg-card p-5 text-sm text-muted-foreground">
+              <p className="eyebrow">Envío y garantía</p>
+              <p className="mt-2">
                 Envío en 3–5 días hábiles. Devoluciones dentro de 30 días.
               </p>
             </div>

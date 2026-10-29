@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 import { RequireAdmin } from '@/components/require-auth';
 import { cn } from '@/lib/utils';
 
@@ -15,21 +16,27 @@ const LINKS = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+    return () => document.documentElement.classList.remove('dark');
+  }, []);
+
   return (
     <RequireAdmin>
-      <div className="container-page py-8">
-        <div className="flex flex-col gap-1">
+      <div className="container-page py-8 sm:py-12">
+        <div className="flex flex-col gap-2">
           <p className="eyebrow">Panel administrativo</p>
-          <h1 className="text-2xl font-semibold">Administración</h1>
+          <h1 className="text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Administración</h1>
         </div>
 
-        <nav className="mb-8 mt-5 flex gap-1 overflow-x-auto rounded-lg border bg-card p-1">
+        <nav aria-label="Secciones del panel" className="mb-8 mt-6 flex gap-1 overflow-x-auto rounded-full border bg-card p-1">
           {LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
+              aria-current={pathname === link.href ? 'page' : undefined}
               className={cn(
-                'whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors',
+                'inline-flex min-h-10 items-center whitespace-nowrap rounded-full px-5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 pathname === link.href
                   ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:bg-secondary',

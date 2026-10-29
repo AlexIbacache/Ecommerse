@@ -42,13 +42,13 @@ export default async function ProductsPage({
   }
 
   return (
-    <div className="container-page py-10">
-      <div className="mb-6 flex flex-col gap-2">
+    <div className="container-page py-10 sm:py-14">
+      <div className="mb-8 flex flex-col gap-2">
         <p className="eyebrow">Catálogo</p>
-        <h1 className="text-3xl font-semibold sm:text-4xl">
+        <h1 className="text-3xl font-normal tracking-[-0.03em] sm:text-5xl">
           {params.q ? `Resultados para “${params.q}”` : 'Todos los productos'}
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">
           {products.meta.totalItems} productos
         </p>
       </div>
@@ -60,8 +60,9 @@ export default async function ProductsPage({
 
       <div className="mt-8">
         {products.data.length === 0 ? (
-          <div className="rounded-lg border bg-card p-10 text-center">
-            <h2 className="text-xl font-semibold">Sin resultados</h2>
+          <div className="rounded-xl border border-dashed border-input bg-card p-10 text-center sm:p-14">
+            <p className="eyebrow">Sin coincidencias</p>
+            <h2 className="mt-2 text-2xl font-normal tracking-[-0.02em]">Sin resultados</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Probá con otra búsqueda o quitá los filtros.
             </p>

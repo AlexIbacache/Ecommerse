@@ -9,8 +9,9 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="container-page py-20 text-center">
-      <h1 className="text-2xl font-semibold">No pudimos cargar el catálogo</h1>
+    <div className="container-page py-24 text-center">
+      <p className="eyebrow">Error</p>
+      <h1 className="mt-2 text-3xl font-normal tracking-[-0.02em]">No pudimos cargar el catálogo</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Revisá la conexión e intentá de nuevo.
       </p>

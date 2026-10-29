@@ -83,7 +83,7 @@ export function PaypalButton({
 
   if (!clientId) {
     return (
-      <p className="rounded-md border bg-secondary/40 p-4 text-sm text-muted-foreground">
+      <p className="rounded-lg border bg-secondary p-4 text-sm text-muted-foreground">
         Para habilitar PayPal Sandbox, configurá{' '}
         <code className="font-mono">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> en el{' '}
         <code className="font-mono">.env</code>.
@@ -93,7 +93,7 @@ export function PaypalButton({
 
   if (failed) {
     return (
-      <p className="rounded-md border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
+      <p className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
         No se pudo cargar PayPal. Intentá de nuevo.
       </p>
     );
