@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../database/prisma.service';
 import type { AdminPageQueryDto } from './dto/admin-query.dto';
 
 @Injectable()
 export class AdminCommentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+  ) {}
 
   async list(query: AdminPageQueryDto) {
     const [totalItems, comments] = await Promise.all([
@@ -39,29 +43,58 @@ export class AdminCommentsService {
     };
   }
 
-  async setStatus(id: number, status: 'VISIBLE' | 'OCULTO') {
-    const comment = await this.prisma.comment.findUnique({ where: { id } });
+  async setStatus(id: number, status: 'VISIBLE' | 'OCULTO', actorId: number) {
+    const comment = await this.prisma.comment.findUnique({
+      where: { id },
+      include: { product: { select: { name: true } } },
+    });
 
     if (!comment) {
       throw new NotFoundException('Comentario no encontrado');
     }
 
-    const updated = await this.prisma.comment.update({
-      where: { id },
-      data: { status },
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.comment.update({
+        where: { id },
+        data: { status },
+      });
+
+      if (comment.status !== status) {
+        await this.audit.record(tx, {
+          actorId,
+          action: status === 'OCULTO' ? 'COMMENT_HIDDEN' : 'COMMENT_RESTORED',
+          entityType: 'COMMENT',
+          entityId: id,
+          summary: comment.product.name,
+        });
+      }
+
+      return result;
     });
 
     return { id: updated.id, status: updated.status };
   }
 
-  async remove(id: number) {
-    const comment = await this.prisma.comment.findUnique({ where: { id } });
+  async remove(id: number, actorId: number) {
+    const comment = await this.prisma.comment.findUnique({
+      where: { id },
+      include: { product: { select: { name: true } } },
+    });
 
     if (!comment) {
       throw new NotFoundException('Comentario no encontrado');
     }
 
-    await this.prisma.comment.delete({ where: { id } });
+    await this.prisma.$transaction(async (tx) => {
+      await tx.comment.delete({ where: { id } });
+      await this.audit.record(tx, {
+        actorId,
+        action: 'COMMENT_DELETED',
+        entityType: 'COMMENT',
+        entityId: id,
+        summary: comment.product.name,
+      });
+    });
 
     return { deleted: true };
   }

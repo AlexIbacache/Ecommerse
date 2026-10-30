@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { AlertTriangle, DollarSign, Package, ShoppingCart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { SalesChart } from '@/components/admin/sales-chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { adminApi, type AdminMetrics } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
@@ -124,6 +125,8 @@ export default function AdminDashboardPage() {
           value={metrics.lowStock.length}
         />
       </div>
+
+      <SalesChart />
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
         <section className="rounded-xl border bg-card">

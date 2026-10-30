@@ -58,6 +58,10 @@ afterAll(async () => {
     await prisma.order.deleteMany({ where: { id: saleOrderId } });
   }
   await prisma.product.deleteMany({ where: { slug: { startsWith: runId } } });
+  // Las acciones de admin dejan entradas en el registro de actividad: se limpian.
+  await prisma.auditLog.deleteMany({
+    where: { summary: { startsWith: runId } },
+  });
   await app.close();
 });
 

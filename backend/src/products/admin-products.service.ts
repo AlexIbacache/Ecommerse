@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../database/prisma.service';
 import type {
   AdminProductQueryDto,
@@ -19,9 +20,22 @@ const ORDER_BY: Record<string, Prisma.ProductOrderByWithRelationInput> = {
   stock_asc: { stock: 'asc' },
 };
 
+const FIELD_LABELS: Record<string, string> = {
+  name: 'nombre',
+  description: 'descripción',
+  price: 'precio',
+  categoryId: 'categoría',
+  stock: 'stock',
+  isActive: 'estado',
+  images: 'imágenes',
+};
+
 @Injectable()
 export class AdminProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+  ) {}
 
   async list(query: AdminProductQueryDto) {
     const { q, category, sort, page, pageSize } = query;
@@ -100,29 +114,41 @@ export class AdminProductsService {
     };
   }
 
-  async create(dto: CreateProductDto) {
+  async create(dto: CreateProductDto, actorId: number) {
     await this.assertCategory(dto.categoryId);
 
-    const product = await this.prisma.product.create({
-      data: {
-        name: dto.name,
-        slug: this.toSlug(dto.name),
-        description: dto.description,
-        price: dto.price.toFixed(2),
-        stock: dto.stock,
-        isActive: dto.isActive,
-        categoryId: dto.categoryId,
-        images: {
-          create: dto.images.map((url, index) => ({ url, position: index })),
+    const product = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.product.create({
+        data: {
+          name: dto.name,
+          slug: this.toSlug(dto.name),
+          description: dto.description,
+          price: dto.price.toFixed(2),
+          stock: dto.stock,
+          isActive: dto.isActive,
+          categoryId: dto.categoryId,
+          images: {
+            create: dto.images.map((url, index) => ({ url, position: index })),
+          },
         },
-      },
-      include: { category: true, images: { orderBy: { position: 'asc' } } },
+        include: { category: true, images: { orderBy: { position: 'asc' } } },
+      });
+
+      await this.audit.record(tx, {
+        actorId,
+        action: 'PRODUCT_CREATED',
+        entityType: 'PRODUCT',
+        entityId: created.id,
+        summary: created.name,
+      });
+
+      return created;
     });
 
     return this.toAdminDetail(product);
   }
 
-  async update(id: number, dto: UpdateProductDto) {
+  async update(id: number, dto: UpdateProductDto, actorId: number) {
     const existing = await this.prisma.product.findUnique({ where: { id } });
 
     if (!existing) {
@@ -138,9 +164,13 @@ export class AdminProductsService {
         where: { id },
         data: {
           ...(dto.name !== undefined ? { name: dto.name } : {}),
-          ...(dto.description !== undefined ? { description: dto.description } : {}),
+          ...(dto.description !== undefined
+            ? { description: dto.description }
+            : {}),
           ...(dto.price !== undefined ? { price: dto.price.toFixed(2) } : {}),
-          ...(dto.categoryId !== undefined ? { categoryId: dto.categoryId } : {}),
+          ...(dto.categoryId !== undefined
+            ? { categoryId: dto.categoryId }
+            : {}),
           ...(dto.stock !== undefined ? { stock: dto.stock } : {}),
           ...(dto.isActive !== undefined ? { isActive: dto.isActive } : {}),
         },
@@ -156,6 +186,20 @@ export class AdminProductsService {
           })),
         });
       }
+
+      const changed = Object.keys(dto)
+        .filter((key) => dto[key as keyof UpdateProductDto] !== undefined)
+        .map((key) => FIELD_LABELS[key] ?? key);
+
+      await this.audit.record(tx, {
+        actorId,
+        action: 'PRODUCT_UPDATED',
+        entityType: 'PRODUCT',
+        entityId: id,
+        summary: dto.name ?? existing.name,
+        details:
+          changed.length > 0 ? 'Cambios: ' + changed.join(', ') : undefined,
+      });
     });
 
     const product = await this.prisma.product.findUniqueOrThrow({
@@ -166,7 +210,7 @@ export class AdminProductsService {
     return this.toAdminDetail(product);
   }
 
-  async remove(id: number) {
+  async remove(id: number, actorId: number) {
     const product = await this.prisma.product.findUnique({
       where: { id },
       include: { _count: { select: { orderItems: true } } },
@@ -177,14 +221,34 @@ export class AdminProductsService {
     }
 
     if (product._count.orderItems > 0) {
-      await this.prisma.product.update({
-        where: { id },
-        data: { isActive: false },
+      await this.prisma.$transaction(async (tx) => {
+        await tx.product.update({
+          where: { id },
+          data: { isActive: false },
+        });
+        await this.audit.record(tx, {
+          actorId,
+          action: 'PRODUCT_DEACTIVATED',
+          entityType: 'PRODUCT',
+          entityId: id,
+          summary: product.name,
+          details:
+            'Tiene ventas asociadas: se desactivó en lugar de eliminarse',
+        });
       });
       return { deleted: false, deactivated: true };
     }
 
-    await this.prisma.product.delete({ where: { id } });
+    await this.prisma.$transaction(async (tx) => {
+      await tx.product.delete({ where: { id } });
+      await this.audit.record(tx, {
+        actorId,
+        action: 'PRODUCT_DELETED',
+        entityType: 'PRODUCT',
+        entityId: id,
+        summary: product.name,
+      });
+    });
     return { deleted: true, deactivated: false };
   }
 

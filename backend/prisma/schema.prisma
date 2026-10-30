@@ -22,6 +22,16 @@ enum PaymentStatus {
   CANCELADA
 }
 
+enum AuditAction {
+  PRODUCT_CREATED
+  PRODUCT_UPDATED
+  PRODUCT_DELETED
+  PRODUCT_DEACTIVATED
+  COMMENT_HIDDEN
+  COMMENT_RESTORED
+  COMMENT_DELETED
+}
+
 enum CommentStatus {
   VISIBLE
   OCULTO
@@ -45,6 +55,7 @@ model User {
   orders       Order[]
   comments     Comment[]
   sessions     Session[]
+  auditLogs    AuditLog[]
 }
 
 model Session {
@@ -153,4 +164,21 @@ model Payment {
   rawPayload      Json?         @map("raw_payload")
   createdAt       DateTime      @default(now()) @map("created_at")
   updatedAt       DateTime      @updatedAt @map("updated_at")
+}
+
+/// Registro de acciones administrativas. `summary` guarda solo el nombre del
+/// producto afectado (nunca el contenido de comentarios ni datos personales).
+model AuditLog {
+  id         Int         @id @default(autoincrement())
+  actorId    Int?        @map("actor_id")
+  actor      User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action     AuditAction
+  entityType String      @map("entity_type")
+  entityId   Int?        @map("entity_id")
+  summary    String      @db.VarChar(255)
+  details    String?     @db.VarChar(255)
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([actorId])
 }

@@ -9,6 +9,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { Role } from '../auth/auth.constants';
+import type { AuthenticatedUser } from '../auth/auth.types';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { AdminCommentsService } from './admin-comments.service';
@@ -26,7 +28,8 @@ export class AdminCommentsController {
 
   @Get()
   list(
-    @Query(new ZodValidationPipe(adminPageQuerySchema)) query: AdminPageQueryDto,
+    @Query(new ZodValidationPipe(adminPageQuerySchema))
+    query: AdminPageQueryDto,
   ) {
     return this.adminCommentsService.list(query);
   }
@@ -36,12 +39,16 @@ export class AdminCommentsController {
     @Param('id', ParseIntPipe) id: number,
     @Body(new ZodValidationPipe(updateCommentStatusSchema))
     dto: UpdateCommentStatusDto,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.adminCommentsService.setStatus(id, dto.status);
+    return this.adminCommentsService.setStatus(id, dto.status, user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.adminCommentsService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.adminCommentsService.remove(id, user.id);
   }
 }

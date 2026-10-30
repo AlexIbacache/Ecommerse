@@ -78,6 +78,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  // La moderación deja entradas en el registro de actividad: se limpian para no ensuciarlo.
+  if (commentId) {
+    await prisma.auditLog.deleteMany({
+      where: { entityType: 'COMMENT', entityId: commentId },
+    });
+  }
   await prisma.comment.deleteMany({
     where: { content: { startsWith: runId } },
   });
