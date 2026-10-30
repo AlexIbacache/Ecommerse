@@ -1,10 +1,14 @@
 'use client';
 
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { StarInput, StarRating } from '@/components/storefront/star-rating';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ApiError, commentsApi, type CommentItem } from '@/lib/api';
+import { ApiError } from '@/lib/api';
+import { reviewsApi, type RatingBreakdown, type ReviewItem } from '@/lib/reviews';
 import { commentSchema } from '@/lib/schemas';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -16,12 +20,57 @@ function formatDate(value: string): string {
   );
 }
 
+function RatingSummaryCard({ summary }: { summary: RatingBreakdown }) {
+  if (summary.count === 0 || summary.average === null) return null;
+
+  return (
+    <div className="grid gap-5 rounded-xl border bg-card p-5 sm:grid-cols-[auto_1fr] sm:items-center sm:gap-8 sm:p-6">
+      <div className="flex items-center gap-4 sm:flex-col sm:items-start sm:gap-2">
+        <p className="font-display text-5xl font-normal tabular-nums tracking-[-0.03em]">
+          {summary.average.toFixed(1)}
+        </p>
+        <div className="space-y-1">
+          <StarRating value={summary.average} size="lg" />
+          <p className="text-sm text-muted-foreground">
+            {summary.count} {summary.count === 1 ? 'puntuación' : 'puntuaciones'}
+          </p>
+        </div>
+      </div>
+
+      <ul className="space-y-1.5" aria-label="Distribución de puntuaciones">
+        {[5, 4, 3, 2, 1].map((star) => {
+          const count = summary.distribution[star - 1] ?? 0;
+          const percent = summary.count > 0 ? (count / summary.count) * 100 : 0;
+
+          return (
+            <li key={star} className="flex items-center gap-3 text-sm">
+              <span className="w-10 flex-none font-mono text-xs text-muted-foreground">{star} ★</span>
+              <span className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
+                <span
+                  className="block h-full rounded-full bg-warning transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                  style={{ width: `${percent}%` }}
+                />
+              </span>
+              <span className="w-6 flex-none text-right font-mono text-xs tabular-nums text-muted-foreground">
+                {count}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 export function CommentsSection({ productId }: { productId: number }) {
+  const router = useRouter();
   const status = useAuthStore((state) => state.status);
   const user = useAuthStore((state) => state.user);
+  const isAuthenticated = status === 'authenticated' && !!user;
 
   const [page, setPage] = useState(1);
-  const [items, setItems] = useState<CommentItem[]>([]);
+  const [items, setItems] = useState<ReviewItem[]>([]);
+  const [summary, setSummary] = useState<RatingBreakdown | null>(null);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -29,6 +78,8 @@ export function CommentsSection({ productId }: { productId: number }) {
 
   const [content, setContent] = useState('');
   const [guestName, setGuestName] = useState('');
+  const [rating, setRating] = useState(0);
+  const [website, setWebsite] = useState('');
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -38,8 +89,9 @@ export function CommentsSection({ productId }: { productId: number }) {
       setError(false);
 
       try {
-        const result = await commentsApi.list(productId, targetPage, PAGE_SIZE);
+        const result = await reviewsApi.list(productId, targetPage, PAGE_SIZE);
         setItems(result.data);
+        setSummary(result.summary);
         setTotalPages(result.meta.totalPages);
         setTotalItems(result.meta.totalItems);
       } catch {
@@ -59,7 +111,6 @@ export function CommentsSection({ productId }: { productId: number }) {
     event.preventDefault();
     setFieldError(null);
 
-    const isAuthenticated = status === 'authenticated' && user;
     const parsed = commentSchema.safeParse({ content, guestName: guestName || undefined });
 
     if (!parsed.success) {
@@ -75,23 +126,31 @@ export function CommentsSection({ productId }: { productId: number }) {
     setSubmitting(true);
 
     try {
-      await commentsApi.create(productId, {
+      await reviewsApi.create(productId, {
         content: parsed.data.content,
+        website,
         ...(isAuthenticated ? {} : { guestName: parsed.data.guestName }),
+        ...(isAuthenticated && rating > 0 ? { rating } : {}),
       });
 
-      toast.success('Comentario publicado');
+      toast.success(rating > 0 ? 'Gracias por tu opinión y tu puntuación' : 'Comentario publicado');
       setContent('');
       setGuestName('');
+      setRating(0);
 
       if (page === 1) {
         await load(1);
       } else {
         setPage(1);
       }
+
+      // La puntuación promedio del encabezado viene del servidor: se vuelve a pedir.
+      if (rating > 0) router.refresh();
     } catch (err) {
       if (err instanceof ApiError && err.status === 429) {
         toast.error('Demasiados comentarios en poco tiempo. Espera un momento.');
+      } else if (err instanceof ApiError && err.status === 409) {
+        setFieldError(err.message);
       } else if (err instanceof ApiError && err.errors?.[0]) {
         setFieldError(err.errors[0].message);
       } else {
@@ -105,14 +164,20 @@ export function CommentsSection({ productId }: { productId: number }) {
   }
 
   return (
-    <section className="mt-16 border-t pt-10">
+    <section id="opiniones" className="mt-16 scroll-mt-24 border-t pt-10">
       <p className="eyebrow">Opiniones</p>
       <h2 className="mt-1 text-2xl font-normal tracking-[-0.02em] sm:text-3xl">
-        Comentarios {totalItems > 0 ? `(${totalItems})` : ''}
+        Opiniones de clientes {totalItems > 0 ? `(${totalItems})` : ''}
       </h2>
 
+      {summary && summary.count > 0 && (
+        <div className="mt-6">
+          <RatingSummaryCard summary={summary} />
+        </div>
+      )}
+
       <div className="mt-6 space-y-4">
-        {loading ? (
+        {loading && items.length === 0 ? (
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="rounded-lg border bg-card p-4">
@@ -138,10 +203,10 @@ export function CommentsSection({ productId }: { productId: number }) {
             </p>
           </div>
         ) : (
-          <ul className="space-y-3">
+          <ul className={`space-y-3 transition-opacity duration-200 ${loading ? 'opacity-60' : ''}`}>
             {items.map((comment) => (
               <li key={comment.id} className="rounded-lg border bg-card p-4">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <p className="text-sm font-semibold">
                     {comment.authorName}
                     {comment.isAnonymous && (
@@ -154,6 +219,7 @@ export function CommentsSection({ productId }: { productId: number }) {
                     {formatDate(comment.createdAt)}
                   </time>
                 </div>
+                {comment.rating !== null && <StarRating value={comment.rating} size="sm" className="mt-1.5" />}
                 <p className="mt-2 whitespace-pre-line text-sm text-muted-foreground">
                   {comment.content}
                 </p>
@@ -187,21 +253,36 @@ export function CommentsSection({ productId }: { productId: number }) {
         )}
       </div>
 
-      <form className="mt-8 space-y-3 rounded-xl border bg-card p-5 shadow-sm sm:p-6" onSubmit={submit}>
-        <h3 className="font-display text-lg font-medium tracking-tight">Deja tu comentario</h3>
+      <form className="relative mt-8 space-y-3 rounded-xl border bg-card p-5 shadow-sm sm:p-6" onSubmit={submit}>
+        <h3 className="font-display text-lg font-medium tracking-tight">Deja tu opinión</h3>
 
-        {status === 'authenticated' && user ? (
-          <p className="text-sm text-muted-foreground">
-            Comentás como <span className="font-medium text-foreground">{user.name}</span>
-          </p>
+        {isAuthenticated ? (
+          <>
+            <p className="text-sm text-muted-foreground">
+              Opinas como <span className="font-medium text-foreground">{user?.name}</span>
+            </p>
+            <div>
+              <p className="text-sm font-medium">Tu puntuación (opcional)</p>
+              <StarInput value={rating} onChange={setRating} />
+            </div>
+          </>
         ) : (
-          <input
-            value={guestName}
-            onChange={(event) => setGuestName(event.target.value)}
-            placeholder="Tu nombre (visible públicamente)"
-            aria-label="Tu nombre"
-            className="h-11 w-full rounded-md border border-input bg-card px-3.5 text-base transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/80 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm sm:max-w-xs"
-          />
+          <>
+            <input
+              value={guestName}
+              onChange={(event) => setGuestName(event.target.value)}
+              placeholder="Tu nombre (visible públicamente)"
+              aria-label="Tu nombre"
+              className="h-11 w-full rounded-md border border-input bg-card px-3.5 text-base transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/80 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm sm:max-w-xs"
+            />
+            <p className="text-sm text-muted-foreground">
+              Para puntuar el producto,{' '}
+              <Link href="/login" className="font-medium text-accent underline-offset-4 hover:underline">
+                inicia sesión
+              </Link>
+              .
+            </p>
+          </>
         )}
 
         <textarea
@@ -213,6 +294,18 @@ export function CommentsSection({ productId }: { productId: number }) {
           className="py-2.5 w-full rounded-md border border-input bg-card px-3.5 text-base transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/80 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
         />
 
+        {/* Campo trampa: fuera de pantalla y fuera del orden de tabulación; las personas no lo ven. */}
+        <div aria-hidden="true" className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden">
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={website}
+            onChange={(event) => setWebsite(event.target.value)}
+          />
+        </div>
+
         {fieldError && (
           <p role="alert" className="text-sm text-destructive">
             {fieldError}
@@ -221,10 +314,10 @@ export function CommentsSection({ productId }: { productId: number }) {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
-            Los comentarios se publican como texto plano.
+            Se publica como texto plano. Máximo 1 enlace por comentario.
           </p>
           <Button type="submit" disabled={submitting}>
-            {submitting ? 'Publicando…' : 'Publicar comentario'}
+            {submitting ? 'Publicando…' : 'Publicar opinión'}
           </Button>
         </div>
       </form>

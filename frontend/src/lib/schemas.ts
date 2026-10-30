@@ -19,7 +19,12 @@ export const commentSchema = z.object({
     .string()
     .trim()
     .min(3, 'Escribe al menos 3 caracteres')
-    .max(1000, 'El comentario no puede superar 1000 caracteres'),
+    .max(1000, 'El comentario no puede superar 1000 caracteres')
+    .refine(
+      (value) => (value.match(/(?:https?:\/\/|www\.)\S+/gi)?.length ?? 0) <= 1,
+      'El comentario no puede incluir más de 1 enlace',
+    )
+    .refine((value) => !/(.)\1{14,}/su.test(value), 'El comentario repite demasiado un mismo carácter'),
   guestName: z.string().trim().max(60, 'Máximo 60 caracteres').optional(),
 });
 

@@ -4,6 +4,12 @@ export interface Category {
   slug: string;
 }
 
+export interface RatingSummary {
+  /** Promedio con un decimal; null si todavía no hay puntuaciones. */
+  average: number | null;
+  count: number;
+}
+
 export interface ProductListItem {
   id: number;
   name: string;
@@ -13,6 +19,7 @@ export interface ProductListItem {
   available: boolean;
   image: string | null;
   category: Category;
+  rating?: RatingSummary;
 }
 
 export interface ProductImage {
@@ -31,6 +38,7 @@ export interface ProductDetail {
   available: boolean;
   category: Category;
   images: ProductImage[];
+  rating?: RatingSummary;
 }
 
 export interface PaginationMeta {

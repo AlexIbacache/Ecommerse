@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { emptySummary, ratingSummaries } from '../comments/ratings';
 import { PrismaService } from '../database/prisma.service';
 import type { ProductQueryDto } from './dto/product-query.dto';
 
@@ -39,6 +40,11 @@ export class ProductsService {
       }),
     ]);
 
+    const ratings = await ratingSummaries(
+      this.prisma,
+      products.map((product) => product.id),
+    );
+
     return {
       data: products.map((product) => ({
         id: product.id,
@@ -48,6 +54,7 @@ export class ProductsService {
         stock: product.stock,
         available: product.isActive && product.stock > 0,
         image: product.images[0]?.url ?? null,
+        rating: ratings.get(product.id) ?? emptySummary(),
         category: {
           id: product.category.id,
           name: product.category.name,
@@ -76,6 +83,8 @@ export class ProductsService {
       throw new NotFoundException('Producto no encontrado');
     }
 
+    const ratings = await ratingSummaries(this.prisma, [product.id]);
+
     return {
       id: product.id,
       name: product.name,
@@ -84,6 +93,7 @@ export class ProductsService {
       price: product.price.toString(),
       stock: product.stock,
       available: product.isActive && product.stock > 0,
+      rating: ratings.get(product.id) ?? emptySummary(),
       category: {
         id: product.category.id,
         name: product.category.name,

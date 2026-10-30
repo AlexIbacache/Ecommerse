@@ -5,6 +5,7 @@ import { CommentsSection } from '@/components/storefront/comments-section';
 import { FadeIn } from '@/components/storefront/fade-in';
 import { ProductGallery } from '@/components/storefront/product-gallery';
 import { TrackView } from '@/components/storefront/recently-viewed';
+import { StarRating } from '@/components/storefront/star-rating';
 import { Badge } from '@/components/ui/badge';
 import { getProductOrNull } from '@/lib/catalog';
 import { formatPrice } from '@/lib/format';
@@ -50,6 +51,18 @@ export default async function ProductPage({
             <div className="space-y-2">
               <p className="eyebrow">{product.category.name}</p>
               <h1 className="text-3xl font-normal leading-[1.1] tracking-[-0.03em] sm:text-4xl lg:text-5xl">{product.name}</h1>
+              {product.rating && product.rating.count > 0 && product.rating.average !== null && (
+                <a
+                  href="#opiniones"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <StarRating value={product.rating.average} />
+                  <span>
+                    <strong className="font-medium text-foreground">{product.rating.average.toFixed(1)}</strong> ·{' '}
+                    {product.rating.count} {product.rating.count === 1 ? 'opinión' : 'opiniones'}
+                  </span>
+                </a>
+              )}
               <div className="flex flex-wrap items-center gap-3">
                 <p className="font-display text-3xl font-medium tabular-nums tracking-[-0.02em]">{formatPrice(product.price)}</p>
                 {product.available ? (

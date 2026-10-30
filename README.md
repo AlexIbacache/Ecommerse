@@ -94,7 +94,7 @@ docker compose exec frontend npm run build      # build de producción del front
 ├── backend/                 # NestJS + Prisma
 │   ├── prisma/              # schema, migraciones y seed
 │   ├── src/                 # auth, users, products, categories, cart,
-│   │                        # comments, orders, payments, admin
+│   │                        # comments, orders, payments, admin, audit
 │   └── test/                # unit + e2e (Jest)
 ├── frontend/                # Next.js App Router
 │   └── src/
@@ -115,13 +115,16 @@ docker compose exec frontend npm run build      # build de producción del front
 - **CORS estricto** (solo el origen configurado), **helmet** (headers de seguridad) y **rate limiting**.
 - Importes recalculados server-side; pagos verificados contra PayPal; idempotencia por `paypal_order_id`.
 - Stock con decremento atómico y control de concurrencia.
+- **Comentarios y reseñas**: texto plano, límite de 1 enlace, rechazo de texto repetido o con caracteres en exceso, campo trampa anti-bots, rechazo de duplicados recientes y rate limit por IP y por usuario. La puntuación (1-5) es solo para usuarios registrados, una por producto (garantizado con un bloqueo en la base ante envíos simultáneos); un comentario oculto por el admin deja de contar en el promedio.
+- **Registro de actividad administrativa**: crear, editar o eliminar productos y moderar comentarios queda en `AuditLog` (quién, qué y cuándo), escrito en la misma transacción que la acción. Solo guarda el nombre del producto, nunca el texto de los comentarios. Se consulta en `/admin/actividad`.
 - Credenciales solo en `.env` (no versionado); PayPal secret únicamente en el backend.
 
 ## Pruebas
 
 ```bash
-# Backend: 81 tests (integridad del modelo, auth/RBAC, catálogo, carrito,
-# comentarios, checkout con PayPal mockeado, admin)
+# Backend: 102 tests (integridad del modelo, auth/RBAC, catálogo, carrito,
+# comentarios y reseñas, checkout con PayPal mockeado, admin, registro de
+# actividad y ventas por día)
 docker compose exec backend npm test
 
 # Frontend: tests del store del carrito
@@ -138,5 +141,5 @@ openspec list
 
 ## Notas
 
-- Las imágenes de producto del seed son URLs de placeholder (picsum.photos); se pueden reemplazar desde el panel administrativo.
+- Las imágenes de producto del seed son fotos de Unsplash enlazadas por URL (requieren conexión a internet); se pueden reemplazar desde el panel administrativo.
 - Todo el flujo de pago usa **Sandbox**: no se realizan transacciones con dinero real.

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion, useReducedMotion } from 'motion/react';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { StarRating } from '@/components/storefront/star-rating';
 import { Badge } from '@/components/ui/badge';
 import { formatPrice } from '@/lib/format';
 import type { ProductListItem } from '@/lib/types';
@@ -110,6 +111,14 @@ export function ProductCard({
         <h3 className={`font-display font-medium leading-snug ${list ? 'text-base sm:text-lg' : 'line-clamp-2 text-sm sm:text-base'}`}>
           {product.name}
         </h3>
+        {product.rating && product.rating.count > 0 && product.rating.average !== null && (
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <StarRating value={product.rating.average} size="sm" />
+            <span className="tabular-nums">
+              {product.rating.average.toFixed(1)} ({product.rating.count})
+            </span>
+          </p>
+        )}
         {list && badge && <div>{badge}</div>}
         <p className="pt-1 font-display text-base font-medium tabular-nums sm:text-lg">
           {formatPrice(product.price)}

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -10,9 +11,12 @@ import type { AuthenticatedUser } from '../auth/auth.types';
 import { PrismaService } from '../database/prisma.service';
 import type { CommentQueryDto } from './dto/comment-query.dto';
 import type { CreateCommentDto } from './dto/create-comment.dto';
+import { ratingBreakdown } from './ratings';
 
 const USER_RATE_LIMIT = 5;
 const USER_RATE_WINDOW_MS = 60_000;
+// Un texto idéntico en el mismo producto dentro de esta ventana se considera repetido.
+const DUPLICATE_WINDOW_MS = 10 * 60_000;
 
 @Injectable()
 export class CommentsService {
@@ -25,6 +29,19 @@ export class CommentsService {
     dto: CreateCommentDto,
     user?: AuthenticatedUser,
   ) {
+    // Honeypot: un bot rellena el campo oculto. Se responde como si hubiera funcionado
+    // (para no darle pistas) pero no se guarda nada.
+    if (dto.website) {
+      return {
+        id: 0,
+        content: dto.content,
+        authorName: dto.guestName ?? 'Anónimo',
+        isAnonymous: !user,
+        rating: null,
+        createdAt: new Date().toISOString(),
+      };
+    }
+
     const product = await this.prisma.product.findFirst({
       where: { id: productId, isActive: true },
       select: { id: true },
@@ -40,18 +57,54 @@ export class CommentsService {
       );
     }
 
+    if (dto.rating !== undefined && !user) {
+      throw new BadRequestException('Inicia sesión para puntuar este producto');
+    }
+
     if (user) {
       this.checkUserRate(user.id);
     }
 
-    const comment = await this.prisma.comment.create({
-      data: {
+    const duplicate = await this.prisma.comment.findFirst({
+      where: {
         productId,
-        userId: user?.id ?? null,
-        guestName: user ? null : dto.guestName,
-        content: dto.content,
+        createdAt: { gte: new Date(Date.now() - DUPLICATE_WINDOW_MS) },
+        content: { equals: dto.content, mode: 'insensitive' },
       },
-      include: { user: true },
+      select: { id: true },
+    });
+
+    if (duplicate) {
+      throw new ConflictException(
+        'Ya existe un comentario igual en este producto',
+      );
+    }
+
+    const comment = await this.prisma.$transaction(async (tx) => {
+      if (dto.rating !== undefined && user) {
+        // Serializa envíos simultáneos del mismo usuario para el mismo producto.
+        await tx.$queryRaw`SELECT 1 FROM (SELECT pg_advisory_xact_lock(${user.id}::int, ${productId}::int)) AS lock`;
+
+        const rated = await tx.comment.findFirst({
+          where: { productId, userId: user.id, rating: { not: null } },
+          select: { id: true },
+        });
+
+        if (rated) {
+          throw new ConflictException('Ya puntuaste este producto');
+        }
+      }
+
+      return tx.comment.create({
+        data: {
+          productId,
+          userId: user?.id ?? null,
+          guestName: user ? null : dto.guestName,
+          content: dto.content,
+          rating: dto.rating ?? null,
+        },
+        include: { user: true },
+      });
     });
 
     return this.toPublic(comment);
@@ -69,7 +122,7 @@ export class CommentsService {
 
     const where = { productId, status: 'VISIBLE' as const };
 
-    const [totalItems, comments] = await Promise.all([
+    const [totalItems, comments, summary] = await Promise.all([
       this.prisma.comment.count({ where }),
       this.prisma.comment.findMany({
         where,
@@ -78,9 +131,11 @@ export class CommentsService {
         take: query.pageSize,
         include: { user: true },
       }),
+      ratingBreakdown(this.prisma, productId),
     ]);
 
     return {
+      summary,
       data: comments.map((comment) => this.toPublic(comment)),
       meta: {
         page: query.page,
@@ -114,6 +169,7 @@ export class CommentsService {
       content: comment.content,
       authorName: comment.user?.name ?? comment.guestName ?? 'Anónimo',
       isAnonymous: comment.userId === null,
+      rating: comment.rating,
       createdAt: comment.createdAt.toISOString(),
     };
   }
