@@ -89,7 +89,7 @@ export default async function ProductsPage({
 
   return (
     <div className="lg:flex">
-      <aside aria-label="Filtros" className="hidden w-72 flex-none border-r border-border bg-card lg:block">
+      <aside aria-label="Filtros" className="surface-slate hidden w-72 flex-none border-r border-border lg:-mb-20 lg:block">
         <div className="sticky top-16 max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain p-4 [scrollbar-width:thin]">
           <CatalogFilters {...filterProps} />
         </div>

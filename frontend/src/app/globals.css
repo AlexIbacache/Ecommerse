@@ -124,4 +124,10 @@
     @apply dark relative overflow-hidden bg-background text-foreground;
     background-image: radial-gradient(60% 120% at 85% 0%, hsl(189 94% 43% / 0.2) 0%, transparent 60%);
   }
+
+  /* Panel lateral: azul pizarra, más claro que el navbar pero aún en la gama navy */
+  .surface-slate {
+    @apply dark text-foreground;
+    background-color: hsl(217 42% 17%);
+  }
 }
