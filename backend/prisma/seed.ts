@@ -134,6 +134,96 @@ const PRODUCTS: SeedProduct[] = [
     categorySlug: 'accesorios',
     images: ['https://picsum.photos/seed/teclado-mecanico/800/800'],
   },
+  {
+    slug: 'auriculares-over-ear-inalambricos',
+    name: 'Auriculares Over-Ear Inalámbricos',
+    description:
+      'Auriculares circumaurales con Bluetooth 5, almohadillas de espuma viscoelástica y hasta 35 horas de batería.',
+    price: '89.90',
+    stock: 18,
+    categorySlug: 'audio',
+    images: ['https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=1200&h=1200&fit=crop&q=80'],
+  },
+  {
+    slug: 'auriculares-studio-plegables',
+    name: 'Auriculares Studio Plegables',
+    description:
+      'Auriculares de diadema plegables con cable desmontable y graves marcados, pensados para música y videollamadas.',
+    price: '59.00',
+    stock: 30,
+    categorySlug: 'audio',
+    images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&h=1200&fit=crop&q=80'],
+  },
+  {
+    slug: 'parlante-bluetooth-resistente-al-agua',
+    name: 'Parlante Bluetooth Resistente al Agua',
+    description:
+      'Parlante portátil con certificación IPX7, sonido estéreo y 12 horas de reproducción continua.',
+    price: '64.00',
+    stock: 22,
+    categorySlug: 'audio',
+    images: ['https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=1200&h=1200&fit=crop&q=80'],
+  },
+  {
+    slug: 'mouse-inalambrico-ergonomico',
+    name: 'Mouse Inalámbrico Ergonómico',
+    description:
+      'Mouse inalámbrico de 2.4 GHz con sensor óptico de 1600 DPI y diseño ergonómico para uso prolongado.',
+    price: '24.90',
+    stock: 50,
+    categorySlug: 'accesorios',
+    images: ['https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=1200&h=1200&fit=crop&q=80'],
+  },
+  {
+    slug: 'teclado-mecanico-75-compacto',
+    name: 'Teclado Mecánico 75% Compacto',
+    description:
+      'Teclado mecánico inalámbrico de 84 teclas con switches intercambiables y retroiluminación configurable.',
+    price: '79.00',
+    stock: 14,
+    categorySlug: 'accesorios',
+    images: ['https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=1200&h=1200&fit=crop&q=80'],
+  },
+  {
+    slug: 'teclado-inalambrico-slim',
+    name: 'Teclado Inalámbrico Slim',
+    description:
+      'Teclado de perfil bajo con conexión Bluetooth, batería recargable y distribución en español.',
+    price: '39.90',
+    stock: 35,
+    categorySlug: 'accesorios',
+    images: ['https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=1200&h=1200&fit=crop&q=80'],
+  },
+  {
+    slug: 'notebook-ultraliviano-14',
+    name: 'Notebook Ultraliviano 14"',
+    description:
+      'Notebook de 14 pulgadas con pantalla Full HD, 16 GB de RAM y SSD de 512 GB para trabajo y estudio.',
+    price: '649.00',
+    stock: 6,
+    categorySlug: 'accesorios',
+    images: ['https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=1200&h=1200&fit=crop&q=80'],
+  },
+  {
+    slug: 'tablet-11-pulgadas',
+    name: 'Tablet 11 Pulgadas',
+    description:
+      'Tablet de 11 pulgadas con pantalla de alta resolución, 128 GB de almacenamiento y compatibilidad con lápiz.',
+    price: '329.00',
+    stock: 3,
+    categorySlug: 'accesorios',
+    images: ['https://images.unsplash.com/photo-1587033411391-5d9e51cce126?w=1200&h=1200&fit=crop&q=80'],
+  },
+  {
+    slug: 'procesador-de-8-nucleos',
+    name: 'Procesador de 8 Núcleos',
+    description:
+      'Procesador de escritorio de 8 núcleos y 16 hilos, socket AM4, ideal para equipos de trabajo y juegos.',
+    price: '199.00',
+    stock: 7,
+    categorySlug: 'accesorios',
+    images: ['https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=1200&h=1200&fit=crop&q=80'],
+  },
 ];
 
 async function main(): Promise<void> {
