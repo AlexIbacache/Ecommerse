@@ -113,6 +113,9 @@ docker compose exec frontend npm run build      # build de producción del front
 - Autorización por rol y por propietario verificada en el backend (un recurso ajeno responde 404).
 - Validación de entradas con Zod en todos los endpoints; errores sin stack traces.
 - **CORS estricto** (solo el origen configurado), **helmet** (headers de seguridad) y **rate limiting**.
+- **Cabeceras de seguridad también en el frontend** (`next.config.ts`): CSP con lista de orígenes permitidos (PayPal incluido), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy` y `Permissions-Policy`; sin `X-Powered-By`.
+- **Registro de seguridad**: las respuestas 401, 403 y 429 se registran (método, ruta e IP, nunca el cuerpo ni credenciales). Los errores de JSON mal formado devuelven un mensaje genérico, no el del parser.
+- Las cuentas de demostración del seed **no se crean con `NODE_ENV=production`**.
 - Importes recalculados server-side; pagos verificados contra PayPal; idempotencia por `paypal_order_id`.
 - Stock con decremento atómico y control de concurrencia.
 - **Comentarios y reseñas**: texto plano, límite de 1 enlace, rechazo de texto repetido o con caracteres en exceso, campo trampa anti-bots, rechazo de duplicados recientes y rate limit por IP y por usuario. La puntuación (1-5) es solo para usuarios registrados, una por producto (garantizado con un bloqueo en la base ante envíos simultáneos); un comentario oculto por el admin deja de contar en el promedio.

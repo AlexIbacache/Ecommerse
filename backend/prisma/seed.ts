@@ -258,32 +258,35 @@ async function main(): Promise<void> {
     }),
   ]);
 
-  const [adminPasswordHash, clientPasswordHash] = await Promise.all([
-    hash('Admin123!', ARGON2_OPTIONS),
-    hash('Cliente123!', ARGON2_OPTIONS),
-  ]);
+  // Las cuentas de demostración tienen contraseñas públicas: nunca se crean en producción.
+  if (process.env.NODE_ENV !== 'production') {
+    const [adminPasswordHash, clientPasswordHash] = await Promise.all([
+      hash('Admin123!', ARGON2_OPTIONS),
+      hash('Cliente123!', ARGON2_OPTIONS),
+    ]);
 
-  await prisma.user.upsert({
-    where: { email: 'admin@demo.local' },
-    update: {},
-    create: {
-      email: 'admin@demo.local',
-      name: 'Administrador Demo',
-      passwordHash: adminPasswordHash,
-      roleId: adminRole.id,
-    },
-  });
+    await prisma.user.upsert({
+      where: { email: 'admin@demo.local' },
+      update: {},
+      create: {
+        email: 'admin@demo.local',
+        name: 'Administrador Demo',
+        passwordHash: adminPasswordHash,
+        roleId: adminRole.id,
+      },
+    });
 
-  await prisma.user.upsert({
-    where: { email: 'cliente@demo.local' },
-    update: {},
-    create: {
-      email: 'cliente@demo.local',
-      name: 'Cliente Demo',
-      passwordHash: clientPasswordHash,
-      roleId: clientRole.id,
-    },
-  });
+    await prisma.user.upsert({
+      where: { email: 'cliente@demo.local' },
+      update: {},
+      create: {
+        email: 'cliente@demo.local',
+        name: 'Cliente Demo',
+        passwordHash: clientPasswordHash,
+        roleId: clientRole.id,
+      },
+    });
+  }
 
   const categoriesBySlug = new Map<string, number>();
 
