@@ -110,7 +110,7 @@ export default function AdminCommentsPage() {
           No hay comentarios para moderar.
         </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="animate-fade-up space-y-3 motion-reduce:animate-none">
           {(comments ?? []).map((comment) => (
             <li key={comment.id} className="rounded-xl border bg-card p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">

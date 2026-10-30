@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { CartSkeleton } from '@/components/loading/skeletons';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -102,12 +103,7 @@ export default function CartPage() {
   }
 
   if (!mounted) {
-    return (
-      <div className="container-page py-10 sm:py-14">
-        <h1 className="text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Carrito</h1>
-        <p className="mt-4 text-sm text-muted-foreground" role="status">Cargando…</p>
-      </div>
-    );
+    return <CartSkeleton />;
   }
 
   if (items.length === 0) {

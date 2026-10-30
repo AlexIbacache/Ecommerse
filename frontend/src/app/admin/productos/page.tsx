@@ -317,7 +317,7 @@ export default function AdminProductsPage() {
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border bg-card">
+        <div className="animate-fade-up overflow-x-auto rounded-xl border bg-card motion-reduce:animate-none">
           <table className="block w-full text-sm md:table md:min-w-[640px]">
             <thead className="hidden bg-secondary text-left md:table-header-group font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
               <tr>

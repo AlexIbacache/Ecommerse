@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { OrderSkeleton } from '@/components/loading/skeletons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { RequireAuth } from '@/components/require-auth';
 import { ApiError, ordersApi, type OrderDetail } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
+import { useAuthStore } from '@/stores/auth-store';
 
 type BadgeVariant = 'default' | 'accent' | 'outline' | 'muted' | 'success' | 'warning' | 'destructive';
 
@@ -62,11 +64,7 @@ function OrderContent() {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="container-page py-24" role="status">
-        <p className="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">Cargando pedido…</p>
-      </div>
-    );
+    return <OrderSkeleton />;
   }
 
   if (notFound || !order) {
@@ -144,6 +142,12 @@ function OrderContent() {
 }
 
 export default function OrderDetailPage() {
+  const status = useAuthStore((state) => state.status);
+
+  if (status === 'loading') {
+    return <OrderSkeleton />;
+  }
+
   return (
     <RequireAuth>
       <OrderContent />

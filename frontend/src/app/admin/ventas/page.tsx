@@ -79,7 +79,7 @@ export default function AdminSalesPage() {
           Todavía no hay ventas registradas.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border bg-card">
+        <div className="animate-fade-up overflow-x-auto rounded-xl border bg-card motion-reduce:animate-none">
           <table className="block w-full text-sm lg:table lg:min-w-[760px]">
             <thead className="hidden bg-secondary text-left lg:table-header-group font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
               <tr>

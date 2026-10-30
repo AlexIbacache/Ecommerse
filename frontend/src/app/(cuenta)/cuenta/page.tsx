@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { AccountSkeleton } from '@/components/loading/skeletons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -235,6 +236,12 @@ function AccountContent() {
 }
 
 export default function CuentaPage() {
+  const status = useAuthStore((state) => state.status);
+
+  if (status === 'loading') {
+    return <AccountSkeleton />;
+  }
+
   return (
     <RequireAuth>
       <AccountContent />

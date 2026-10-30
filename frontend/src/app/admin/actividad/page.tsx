@@ -86,7 +86,7 @@ export default function AdminActivityPage() {
           modere un comentario.
         </div>
       ) : (
-        <ul className={`divide-y rounded-xl border bg-card transition-opacity duration-200 ${loading ? 'opacity-60' : ''}`}>
+        <ul className={`animate-fade-up divide-y rounded-xl border bg-card transition-opacity duration-200 motion-reduce:animate-none ${loading ? 'opacity-60' : ''}`}>
           {entries?.map((entry) => {
             const action = ACTIONS[entry.action] ?? { label: entry.action, variant: 'outline' as BadgeVariant };
 

@@ -74,16 +74,20 @@ export default function AdminDashboardPage() {
   }, []);
 
   if (loading) {
+    // Misma estructura que el estado cargado: así el gráfico de ventas se monta ya y pide sus datos
+    // en paralelo con las métricas, en vez de esperar a que terminen.
     return (
-      <div className="space-y-8">
+      <div className="space-y-8" aria-busy="true">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <span role="status" className="sr-only">Cargando métricas…</span>
           {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-24 w-full rounded-lg" />
+            <Skeleton key={index} className="h-[104px] w-full rounded-xl" />
           ))}
         </div>
+        <SalesChart />
         <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-          <Skeleton className="h-64 w-full rounded-lg" />
-          <Skeleton className="h-64 w-full rounded-lg" />
+          <Skeleton className="h-64 w-full rounded-xl" />
+          <Skeleton className="h-64 w-full rounded-xl" />
         </div>
       </div>
     );
@@ -111,7 +115,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid animate-fade-up gap-4 motion-reduce:animate-none sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard icon={Package} label="Productos" value={metrics.totalProducts} />
         <MetricCard icon={ShoppingCart} label="Ventas" value={metrics.totalSales} />
         <MetricCard
@@ -128,7 +132,7 @@ export default function AdminDashboardPage() {
 
       <SalesChart />
 
-      <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+      <div className="grid animate-fade-up gap-8 motion-reduce:animate-none lg:grid-cols-[1.4fr_1fr]">
         <section className="rounded-xl border bg-card">
           <header className="border-b px-5 py-4">
             <h2 className="font-display text-lg font-medium tracking-tight">Pedidos recientes</h2>
