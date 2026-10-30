@@ -32,8 +32,8 @@ export default async function ProductPage({
           image: product.images[0]?.url ?? null,
         }}
       />
-      <nav aria-label="Migas de pan" className="mb-8 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
-        <Link href="/productos" className="transition-colors hover:text-foreground">
+      <nav aria-label="Migas de pan" className="mb-4 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
+        <Link href="/productos" className="inline-flex min-h-11 items-center transition-colors hover:text-foreground">
           Catálogo
         </Link>
         <span> / </span>

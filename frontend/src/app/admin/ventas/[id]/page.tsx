@@ -90,7 +90,7 @@ export default function AdminSaleDetailPage() {
 
   return (
     <div className="space-y-6">
-      <Link href="/admin/ventas" className="text-sm text-muted-foreground hover:text-foreground">
+      <Link href="/admin/ventas" className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground">
         ← Volver a ventas
       </Link>
 

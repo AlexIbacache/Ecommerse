@@ -22,7 +22,7 @@ export const createProductSchema = z.object({
   isActive: z.boolean().optional().default(true),
   images: z
     .array(imageUrl)
-    .min(1, 'Agregá al menos una imagen')
+    .min(1, 'Agrega al menos una imagen')
     .max(5, 'Máximo 5 imágenes'),
 });
 

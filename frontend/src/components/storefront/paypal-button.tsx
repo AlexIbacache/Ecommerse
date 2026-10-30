@@ -94,7 +94,7 @@ export function PaypalButton({
   if (failed) {
     return (
       <p className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-        No se pudo cargar PayPal. Intentá de nuevo.
+        No se pudo cargar PayPal. Intenta de nuevo.
       </p>
     );
   }

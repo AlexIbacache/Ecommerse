@@ -81,14 +81,14 @@ export function Header() {
           <span className="hidden max-w-32 truncate sm:inline">{user.name}</span>
         </Link>
         {user.role === 'ADMINISTRADOR' && (
-          <Link href="/admin" className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline">
+          <Link href="/admin" className="hidden h-11 items-center text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline-flex">
             Panel
           </Link>
         )}
         <button
           type="button"
           onClick={() => setConfirmLogout(true)}
-          className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline"
+          className="hidden h-11 items-center text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
         >
           Salir
         </button>
@@ -105,7 +105,7 @@ export function Header() {
       <div className="container-page flex h-16 items-center gap-3 sm:gap-4">
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menú">
+            <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Abrir menú">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
@@ -171,12 +171,12 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-        <Link href="/" className="flex items-center gap-2 rounded-sm font-display text-xl font-medium tracking-[-0.03em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <Link href="/" className="flex h-11 items-center gap-2 rounded-sm font-display text-xl font-medium tracking-[-0.03em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <span aria-hidden="true" className="h-2 w-2 rounded-full bg-cyan-glow" />
           store
         </Link>
 
-        <nav aria-label="Principal" className="hidden items-center gap-1 text-sm md:flex">
+        <nav aria-label="Principal" className="hidden items-center gap-1 text-sm lg:flex">
           <Link
             href="/"
             aria-current={pathname === '/' ? 'page' : undefined}
@@ -194,7 +194,7 @@ export function Header() {
           />
         </nav>
 
-        <form onSubmit={submitSearch} className="ml-auto hidden w-44 items-center md:flex lg:w-72">
+        <form onSubmit={submitSearch} className="ml-auto hidden w-56 items-center lg:flex xl:w-72">
           <div className="relative w-full">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
@@ -207,7 +207,7 @@ export function Header() {
           </div>
         </form>
 
-        <div className="ml-auto flex items-center gap-3 sm:gap-4 md:ml-4">
+        <div className="ml-auto flex items-center gap-3 sm:gap-4 lg:ml-4">
           <Link
             href="/carrito"
             className="relative flex h-11 items-center gap-2 rounded-full border border-input/60 bg-card px-3 text-sm font-medium text-foreground transition-colors hover:border-accent hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4"

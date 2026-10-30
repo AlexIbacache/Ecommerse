@@ -205,7 +205,7 @@ export default function AdminCommentsPage() {
         <DialogContent>
           <DialogTitle>Eliminar comentario</DialogTitle>
           <DialogDescription>
-            ¿Querés eliminar definitivamente este comentario de{' '}
+            ¿Quieres eliminar definitivamente este comentario de{' '}
             {pendingDelete?.authorName}?
           </DialogDescription>
           <div className="mt-6 flex justify-end gap-2">

@@ -59,7 +59,7 @@ Al iniciar, el backend aplica las migraciones y ejecuta el seed (idempotente) au
 
 El flujo de pago requiere credenciales Sandbox propias. Ver la guía paso a paso en **[docs/paypal-sandbox.md](docs/paypal-sandbox.md)**.
 
-Resumen: en el [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/) creá una app Sandbox y copiá `Client ID` y `Secret` a `.env`:
+Resumen: en el [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/) crea una app Sandbox y copia `Client ID` y `Secret` a `.env`:
 
 ```bash
 PAYPAL_CLIENT_ID=...

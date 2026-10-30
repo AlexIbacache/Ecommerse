@@ -80,8 +80,8 @@ export default function AdminSalesPage() {
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border bg-card">
-          <table className="block w-full text-sm md:table md:min-w-[760px]">
-            <thead className="hidden bg-secondary text-left md:table-header-group font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+          <table className="block w-full text-sm lg:table lg:min-w-[760px]">
+            <thead className="hidden bg-secondary text-left lg:table-header-group font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">Pedido</th>
                 <th className="px-4 py-3">Cliente</th>
@@ -92,7 +92,7 @@ export default function AdminSalesPage() {
                 <th className="px-4 py-3 text-right">Detalle</th>
               </tr>
             </thead>
-            <tbody className="block divide-y md:table-row-group">
+            <tbody className="block divide-y lg:table-row-group">
               {(orders ?? []).map((order) => {
                 const status = ORDER_STATUS[order.status] ?? {
                   label: order.status,
@@ -100,29 +100,29 @@ export default function AdminSalesPage() {
                 };
 
                 return (
-                  <tr key={order.id} className="grid grid-cols-2 gap-x-4 gap-y-3 p-4 md:table-row md:p-0">
-                    <td data-label="Pedido" className="md:table-cell md:px-4 md:py-3 font-medium before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">#{order.id}</td>
-                    <td data-label="Cliente" className="md:table-cell md:px-4 md:py-3 before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
+                  <tr key={order.id} className="grid grid-cols-2 gap-x-4 gap-y-3 p-4 lg:table-row lg:p-0">
+                    <td data-label="Pedido" className="lg:table-cell lg:px-4 lg:py-3 font-medium before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] lg:before:hidden">#{order.id}</td>
+                    <td data-label="Cliente" className="lg:table-cell lg:px-4 lg:py-3 before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] lg:before:hidden">
                       <p>{order.customerName}</p>
                       <p className="text-xs text-muted-foreground">
                         {order.customerEmail}
                       </p>
                     </td>
-                    <td data-label="Fecha" className="md:table-cell md:px-4 md:py-3 text-muted-foreground before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
+                    <td data-label="Fecha" className="lg:table-cell lg:px-4 lg:py-3 text-muted-foreground before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] lg:before:hidden">
                       {formatDate(order.createdAt)}
                     </td>
-                    <td data-label="Total" className="md:table-cell md:px-4 md:py-3 font-display font-medium tabular-nums before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
+                    <td data-label="Total" className="lg:table-cell lg:px-4 lg:py-3 font-display font-medium tabular-nums before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] lg:before:hidden">
                       {formatPrice(order.total)}
                     </td>
-                    <td data-label="Estado" className="md:table-cell md:px-4 md:py-3 before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
+                    <td data-label="Estado" className="lg:table-cell lg:px-4 lg:py-3 before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] lg:before:hidden">
                       <Badge variant={status.variant}>{status.label}</Badge>
                     </td>
-                    <td data-label="Pago" className="md:table-cell md:px-4 md:py-3 text-muted-foreground before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] md:before:hidden">
+                    <td data-label="Pago" className="lg:table-cell lg:px-4 lg:py-3 text-muted-foreground before:mb-0.5 before:block before:font-mono before:text-[11px] before:uppercase before:tracking-[0.08em] before:text-muted-foreground before:content-[attr(data-label)] lg:before:hidden">
                       {order.paymentStatus
                         ? (PAYMENT_STATUS[order.paymentStatus] ?? order.paymentStatus)
                         : 'Sin pago'}
                     </td>
-                    <td className="col-span-2 text-right md:table-cell md:px-4 md:py-3 md:text-right">
+                    <td className="col-span-2 text-right lg:table-cell lg:px-4 lg:py-3 lg:text-right">
                       <Button asChild variant="ghost" size="sm">
                         <Link href={`/admin/ventas/${order.id}`}>Ver</Link>
                       </Button>

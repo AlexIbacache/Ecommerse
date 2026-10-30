@@ -17,7 +17,7 @@ const STATES = {
   PAGO_FALLIDO: {
     icon: XCircle,
     title: 'El pago no se completó',
-    text: 'No se registró ningún cargo. Podés volver a intentarlo.',
+    text: 'No se registró ningún cargo. Puedes volver a intentarlo.',
     tone: 'bg-destructive/10 text-destructive',
   },
   CANCELADO: {

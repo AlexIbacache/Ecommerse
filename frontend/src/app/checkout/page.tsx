@@ -106,7 +106,7 @@ function CheckoutContent() {
       setPaypal({ orderId: order.id, paypalOrderId: paypalOrder.paypalOrderId });
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) {
-        toast.error('Algunos productos ya no están disponibles. Volvé al carrito.');
+        toast.error('Algunos productos ya no están disponibles. Vuelve al carrito.');
       } else {
         toast.error(
           error instanceof ApiError ? error.message : 'No pudimos iniciar el pago.',
@@ -126,7 +126,7 @@ function CheckoutContent() {
       await paymentsApi.capture(paypal.paypalOrderId);
       clear();
     } catch {
-      toast.error('El pago no se pudo confirmar. Revisá el estado de tu pedido.');
+      toast.error('El pago no se pudo confirmar. Revisa el estado de tu pedido.');
     } finally {
       router.push(`/checkout/resultado?orderId=${paypal.orderId}`);
     }
@@ -151,7 +151,7 @@ function CheckoutContent() {
       <div className="container-page py-24 text-center">
         <p className="eyebrow">Checkout</p>
         <h1 className="mt-2 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Tu carrito está vacío</h1>
-        <p className="mt-2 text-muted-foreground">Agregá productos antes de continuar.</p>
+        <p className="mt-2 text-muted-foreground">Agrega productos antes de continuar.</p>
         <Button asChild className="mt-6">
           <Link href="/productos">Ver catálogo</Link>
         </Button>
@@ -164,7 +164,7 @@ function CheckoutContent() {
   return (
     <div className="container-page max-w-2xl py-10 sm:py-14">
       <p className="eyebrow">Checkout</p>
-      <h1 className="mt-1 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Revisá tu compra</h1>
+      <h1 className="mt-1 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Revisa tu compra</h1>
 
       <div className="mt-8 space-y-5">
         <div className="rounded-xl border bg-card p-5 shadow-sm sm:p-6">
@@ -194,7 +194,7 @@ function CheckoutContent() {
           <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
             Hay productos no disponibles o sin stock.{' '}
             <Link href="/carrito" className="underline">
-              Volvé al carrito
+              Vuelve al carrito
             </Link>{' '}
             para corregirlo.
           </div>
@@ -202,7 +202,7 @@ function CheckoutContent() {
 
         {paypal ? (
           <div className="rounded-xl border bg-card p-5 shadow-sm sm:p-6">
-            <h2 className="font-display text-xl font-medium tracking-tight">Completá el pago</h2>
+            <h2 className="font-display text-xl font-medium tracking-tight">Completa el pago</h2>
             <p className="mb-4 mt-1 text-sm text-muted-foreground">
               Se abrirá PayPal Sandbox para confirmar el pago de{' '}
               {formatPrice(total)}.

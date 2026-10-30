@@ -79,7 +79,7 @@ export default function CartPage() {
         }
       } catch {
         setValidation(null);
-        toast.error('No pudimos validar el carrito. Intentá de nuevo.');
+        toast.error('No pudimos validar el carrito. Intenta de nuevo.');
       } finally {
         setValidating(false);
       }
@@ -135,7 +135,7 @@ export default function CartPage() {
 
       {hasIssues && (
         <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          Revisá los ítems marcados antes de continuar con la compra.
+          Revisa los ítems marcados antes de continuar con la compra.
         </div>
       )}
 
@@ -155,7 +155,7 @@ export default function CartPage() {
 
                   <div className="flex flex-1 flex-col justify-between gap-2">
                     <div className="flex items-start justify-between gap-3">
-                      <Link href={`/producto/${item.slug}`} className="font-display font-medium leading-snug underline-offset-4 hover:underline">
+                      <Link href={`/producto/${item.slug}`} className="inline-block py-1 font-display font-medium leading-snug underline-offset-4 hover:underline">
                         {item.name}
                       </Link>
                       <button
@@ -248,7 +248,7 @@ export default function CartPage() {
         <DialogContent>
           <DialogTitle>Quitar producto</DialogTitle>
           <DialogDescription>
-            ¿Querés quitar “{pendingRemove?.name}” del carrito?
+            ¿Quieres quitar “{pendingRemove?.name}” del carrito?
           </DialogDescription>
           <div className="mt-6 flex justify-end gap-2">
             <Button variant="outline" onClick={() => setPendingRemove(null)}>

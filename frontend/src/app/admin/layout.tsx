@@ -29,14 +29,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <h1 className="text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Administración</h1>
         </div>
 
-        <nav aria-label="Secciones del panel" className="mb-8 mt-6 flex gap-1 overflow-x-auto rounded-full border bg-card p-1">
+        <nav aria-label="Secciones del panel" className="mb-8 mt-6 grid grid-cols-2 gap-1 rounded-2xl border bg-card p-1 sm:flex sm:overflow-x-auto sm:rounded-full">
           {LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               aria-current={pathname === link.href ? 'page' : undefined}
               className={cn(
-                'inline-flex min-h-10 items-center whitespace-nowrap rounded-full px-5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                'inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full px-5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 pathname === link.href
                   ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:bg-secondary',

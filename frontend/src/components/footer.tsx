@@ -4,7 +4,7 @@ import { getCategories } from '@/lib/catalog';
 import type { Category } from '@/lib/types';
 
 const linkClass =
-  'block w-fit rounded-sm py-2 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:py-1';
+  'block w-fit rounded-sm py-2.5 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
 export async function Footer() {
   const categories: Category[] = await getCategories().catch(() => []);

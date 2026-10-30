@@ -190,7 +190,7 @@ export default function AdminProductsPage() {
           errors[fieldError.field] = fieldError.message;
         }
         setFormErrors(errors);
-        toast.error('Revisá los datos del producto');
+        toast.error('Revisa los datos del producto');
       } else {
         toast.error(
           err instanceof ApiError ? err.message : 'No pudimos guardar el producto',
@@ -586,7 +586,7 @@ export default function AdminProductsPage() {
         <DialogContent>
           <DialogTitle>Eliminar producto</DialogTitle>
           <DialogDescription>
-            ¿Querés eliminar “{deleteTarget?.name}”? Si tiene ventas asociadas se
+            ¿Quieres eliminar “{deleteTarget?.name}”? Si tiene ventas asociadas se
             desactivará en lugar de borrarse para conservar el historial.
           </DialogDescription>
           <div className="mt-6 flex justify-end gap-2">

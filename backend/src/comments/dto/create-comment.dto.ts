@@ -9,7 +9,7 @@ export const createCommentSchema = z.object({
   guestName: z
     .string()
     .trim()
-    .min(2, 'Indicá un nombre de al menos 2 caracteres')
+    .min(2, 'Indica un nombre de al menos 2 caracteres')
     .max(60, 'El nombre no puede superar 60 caracteres')
     .optional(),
 });

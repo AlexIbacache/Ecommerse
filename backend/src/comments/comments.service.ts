@@ -36,7 +36,7 @@ export class CommentsService {
 
     if (!user && !dto.guestName) {
       throw new BadRequestException(
-        'Indicá un nombre para comentar como visitante',
+        'Indica un nombre para comentar como visitante',
       );
     }
 

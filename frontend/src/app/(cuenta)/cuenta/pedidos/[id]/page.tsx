@@ -105,7 +105,7 @@ function OrderContent() {
           {order.items.map((item) => (
             <li key={item.productId} className="flex items-center justify-between gap-3 p-4">
               <div>
-                <Link href={`/producto/${item.slug}`} className="font-display font-medium underline-offset-4 hover:underline">
+                <Link href={`/producto/${item.slug}`} className="inline-block py-1 font-display font-medium underline-offset-4 hover:underline">
                   {item.name}
                 </Link>
                 <p className="font-mono text-xs text-muted-foreground">

@@ -39,7 +39,7 @@ export default function RegisterPage() {
 
     try {
       await register(parsed.data);
-      toast.success('Cuenta creada. Iniciá sesión para continuar.');
+      toast.success('Cuenta creada. Inicia sesión para continuar.');
       router.push('/login');
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) {
@@ -63,7 +63,7 @@ export default function RegisterPage() {
           <p className="eyebrow">Registro</p>
           <h1 className="text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Crear cuenta</h1>
           <p className="text-sm text-muted-foreground">
-            Registrate para comprar y consultar tus pedidos.
+            Regístrate para comprar y consultar tus pedidos.
           </p>
         </div>
 
@@ -124,7 +124,7 @@ export default function RegisterPage() {
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
-          ¿Ya tenés cuenta?{' '}
+          ¿Ya tienes cuenta?{' '}
           <Link href="/login" className="inline-flex min-h-11 items-center font-medium text-accent underline-offset-4 hover:underline">
             Ingresar
           </Link>

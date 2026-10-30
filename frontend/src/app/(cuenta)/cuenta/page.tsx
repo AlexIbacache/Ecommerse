@@ -127,7 +127,7 @@ function AccountContent() {
       <p className="eyebrow">Cuenta</p>
       <h1 className="mt-1 text-3xl font-normal tracking-[-0.03em] sm:text-4xl">Mi cuenta</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Gestioná tus datos y consultá tus compras.
+        Gestiona tus datos y consulta tus compras.
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.25fr]">

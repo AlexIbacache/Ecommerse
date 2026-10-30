@@ -68,7 +68,7 @@ export function CommentsSection({ productId }: { productId: number }) {
     }
 
     if (!isAuthenticated && (parsed.data.guestName ?? '').length < 2) {
-      setFieldError('Indicá tu nombre (mínimo 2 caracteres)');
+      setFieldError('Indica tu nombre (mínimo 2 caracteres)');
       return;
     }
 
@@ -91,7 +91,7 @@ export function CommentsSection({ productId }: { productId: number }) {
       }
     } catch (err) {
       if (err instanceof ApiError && err.status === 429) {
-        toast.error('Demasiados comentarios en poco tiempo. Esperá un momento.');
+        toast.error('Demasiados comentarios en poco tiempo. Espera un momento.');
       } else if (err instanceof ApiError && err.errors?.[0]) {
         setFieldError(err.errors[0].message);
       } else {
@@ -188,7 +188,7 @@ export function CommentsSection({ productId }: { productId: number }) {
       </div>
 
       <form className="mt-8 space-y-3 rounded-xl border bg-card p-5 shadow-sm sm:p-6" onSubmit={submit}>
-        <h3 className="font-display text-lg font-medium tracking-tight">Dejá tu comentario</h3>
+        <h3 className="font-display text-lg font-medium tracking-tight">Deja tu comentario</h3>
 
         {status === 'authenticated' && user ? (
           <p className="text-sm text-muted-foreground">
@@ -207,7 +207,7 @@ export function CommentsSection({ productId }: { productId: number }) {
         <textarea
           value={content}
           onChange={(event) => setContent(event.target.value)}
-          placeholder="Contanos tu experiencia con este producto…"
+          placeholder="Cuéntanos tu experiencia con este producto…"
           aria-label="Comentario"
           rows={4}
           className="py-2.5 w-full rounded-md border border-input bg-card px-3.5 text-base transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/80 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
