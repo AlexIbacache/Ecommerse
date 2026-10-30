@@ -38,11 +38,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+    <html
+      lang="es"
+      data-scroll-behavior="smooth"
+      className={`relative ${display.variable} ${sans.variable} ${mono.variable}`}
+    >
       <body className="flex min-h-screen flex-col">
         <AuthProvider>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="flex flex-1 flex-col">{children}</main>
           <Footer />
         </AuthProvider>
         <Toaster richColors position="top-center" />
