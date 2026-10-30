@@ -21,3 +21,7 @@ npm-debug.log*
 Thumbs.db
 .idea/
 .vscode/
+
+# Capturas temporales y cache de TypeScript
+capturas/
+*.tsbuildinfo
