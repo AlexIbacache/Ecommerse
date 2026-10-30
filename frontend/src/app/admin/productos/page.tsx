@@ -535,7 +535,7 @@ export default function AdminProductsPage() {
                       imagesText: event.target.value,
                     }))
                   }
-                  placeholder="https://picsum.photos/seed/producto/800/800"
+                  placeholder="https://ejemplo.com/imagen-producto.jpg"
                   className="w-full rounded-md border border-input bg-card px-3.5 py-2.5 text-base transition-[border-color,box-shadow] duration-200 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm font-mono"
                 />
                 {formErrors.images && (

@@ -40,8 +40,8 @@ const PRODUCTS: SeedProduct[] = [
     stock: 25,
     categorySlug: 'audio',
     images: [
-      'https://picsum.photos/seed/auriculares-pro-1/800/800',
-      'https://picsum.photos/seed/auriculares-pro-2/800/800',
+      'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=1200&h=1200&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=1200&h=1200&fit=crop&q=80',
     ],
   },
   {
@@ -52,7 +52,9 @@ const PRODUCTS: SeedProduct[] = [
     price: '79.50',
     stock: 40,
     categorySlug: 'audio',
-    images: ['https://picsum.photos/seed/parlante-portatil/800/800'],
+    images: [
+      'https://images.unsplash.com/photo-1589003077984-894e133dabab?w=1200&h=1200&fit=crop&q=80',
+    ],
   },
   {
     slug: 'vinilo-edicion-limitada',
@@ -62,7 +64,9 @@ const PRODUCTS: SeedProduct[] = [
     price: '34.99',
     stock: 2,
     categorySlug: 'audio',
-    images: ['https://picsum.photos/seed/vinilo-limitado/800/800'],
+    images: [
+      'https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=1200&h=1200&fit=crop&q=80',
+    ],
   },
   {
     slug: 'funda-protectora-premium',
@@ -72,7 +76,9 @@ const PRODUCTS: SeedProduct[] = [
     price: '19.99',
     stock: 100,
     categorySlug: 'accesorios',
-    images: ['https://picsum.photos/seed/funda-premium/800/800'],
+    images: [
+      'https://images.unsplash.com/photo-1657603571233-5e9860e96d00?w=1200&h=1200&fit=crop&q=80',
+    ],
   },
   {
     slug: 'cable-usb-c-trenzado',
@@ -82,7 +88,9 @@ const PRODUCTS: SeedProduct[] = [
     price: '12.99',
     stock: 0,
     categorySlug: 'accesorios',
-    images: ['https://picsum.photos/seed/cable-usbc/800/800'],
+    images: [
+      'https://images.unsplash.com/photo-1595756630452-736bc8ef3693?w=1200&h=1200&fit=crop&q=80',
+    ],
   },
   {
     slug: 'mochila-urbana-antirrobo',
@@ -92,7 +100,9 @@ const PRODUCTS: SeedProduct[] = [
     price: '89.00',
     stock: 15,
     categorySlug: 'accesorios',
-    images: ['https://picsum.photos/seed/mochila-urbana/800/800'],
+    images: [
+      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&h=1200&fit=crop&q=80',
+    ],
   },
   {
     slug: 'lampara-escritorio-led',
@@ -102,7 +112,9 @@ const PRODUCTS: SeedProduct[] = [
     price: '45.00',
     stock: 8,
     categorySlug: 'hogar',
-    images: ['https://picsum.photos/seed/lampara-led/800/800'],
+    images: [
+      'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=1200&h=1200&fit=crop&q=80',
+    ],
   },
   {
     slug: 'difusor-aromas-ceramica',
@@ -112,7 +124,9 @@ const PRODUCTS: SeedProduct[] = [
     price: '27.50',
     stock: 3,
     categorySlug: 'hogar',
-    images: ['https://picsum.photos/seed/difusor-ceramica/800/800'],
+    images: [
+      'https://images.unsplash.com/photo-1605671507162-43e526ef6f97?w=1200&h=1200&fit=crop&q=80',
+    ],
   },
   {
     slug: 'organizador-escritorio',
@@ -122,7 +136,9 @@ const PRODUCTS: SeedProduct[] = [
     price: '22.00',
     stock: 60,
     categorySlug: 'hogar',
-    images: ['https://picsum.photos/seed/organizador-escritorio/800/800'],
+    images: [
+      'https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=1200&h=1200&fit=crop&q=80',
+    ],
   },
   {
     slug: 'teclado-mecanico-compacto',
@@ -132,7 +148,9 @@ const PRODUCTS: SeedProduct[] = [
     price: '149.00',
     stock: 12,
     categorySlug: 'accesorios',
-    images: ['https://picsum.photos/seed/teclado-mecanico/800/800'],
+    images: [
+      'https://images.unsplash.com/photo-1595225476474-87563907a212?w=1200&h=1200&fit=crop&q=80',
+    ],
   },
   {
     slug: 'auriculares-over-ear-inalambricos',
