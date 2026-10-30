@@ -4,6 +4,7 @@ import { AddToCartPanel } from '@/components/storefront/add-to-cart-panel';
 import { CommentsSection } from '@/components/storefront/comments-section';
 import { FadeIn } from '@/components/storefront/fade-in';
 import { ProductGallery } from '@/components/storefront/product-gallery';
+import { TrackView } from '@/components/storefront/recently-viewed';
 import { Badge } from '@/components/ui/badge';
 import { getProductOrNull } from '@/lib/catalog';
 import { formatPrice } from '@/lib/format';
@@ -22,6 +23,15 @@ export default async function ProductPage({
 
   return (
     <div className="container-page py-10 sm:py-14">
+      <TrackView
+        product={{
+          id: product.id,
+          slug: product.slug,
+          name: product.name,
+          price: product.price,
+          image: product.images[0]?.url ?? null,
+        }}
+      />
       <nav aria-label="Migas de pan" className="mb-8 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
         <Link href="/productos" className="transition-colors hover:text-foreground">
           Catálogo

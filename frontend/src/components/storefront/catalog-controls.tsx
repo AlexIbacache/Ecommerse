@@ -1,9 +1,9 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { Search, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { LayoutGrid, List, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -11,7 +11,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from '@/components/ui/select';
-import type { Category } from '@/lib/types';
+import { buildHref, type CatalogParams } from '@/components/storefront/catalog-query';
 
 const SORT_OPTIONS = [
   { value: 'createdAt_desc', label: 'Más recientes' },
@@ -20,134 +20,89 @@ const SORT_OPTIONS = [
   { value: 'name_asc', label: 'Nombre A–Z' },
 ];
 
-export interface CatalogCurrent {
-  q?: string;
-  category?: string;
-  sort?: string;
-}
-
+/** Barra de búsqueda, orden y vista. `children` recibe el botón de filtros móvil. */
 export function CatalogControls({
-  categories,
-  current,
+  params,
+  children,
 }: {
-  categories: Category[];
-  current: CatalogCurrent;
+  params: CatalogParams;
+  children?: React.ReactNode;
 }) {
   const router = useRouter();
-  const pathname = usePathname();
-  const [search, setSearch] = useState(current.q ?? '');
-  const initialized = useRef(false);
+  const [search, setSearch] = useState(params.q ?? '');
 
-  function navigate(next: CatalogCurrent) {
-    const merged = {
-      q: current.q,
-      category: current.category,
-      sort: current.sort,
-      ...next,
-    };
+  // La URL cambia al buscar, quitar el chip o "Limpiar": el campo siempre refleja la búsqueda activa.
+  useEffect(() => setSearch(params.q ?? ''), [params.q]);
 
-    const params = new URLSearchParams();
-    if (merged.q) params.set('q', merged.q);
-    if (merged.category) params.set('category', merged.category);
-    if (merged.sort && merged.sort !== 'createdAt_desc') {
-      params.set('sort', merged.sort);
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    const value = search.trim();
+    if ((params.q ?? '') !== value) {
+      router.push(buildHref(params, { q: value || undefined }), { scroll: false });
     }
-
-    const qs = params.toString();
-    router.push(qs ? `${pathname}?${qs}` : pathname);
   }
 
-  useEffect(() => {
-    if (!initialized.current) {
-      initialized.current = true;
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      const value = search.trim();
-      if ((current.q ?? '') !== value) {
-        navigate({ q: value || undefined });
-      }
-    }, 350);
-
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
-
-  const hasFilters = Boolean(current.q || current.category || (current.sort && current.sort !== 'createdAt_desc'));
-
-  const selectedCategoryName = current.category
-    ? (categories.find((category) => category.slug === current.category)?.name ??
-      'Categoría')
-    : 'Todas las categorías';
-
   const selectedSortLabel =
-    SORT_OPTIONS.find((option) => option.value === (current.sort ?? 'createdAt_desc'))
-      ?.label ?? 'Ordenar';
+    SORT_OPTIONS.find((option) => option.value === params.sort)?.label ?? 'Ordenar';
+
+  const viewClass = (active: boolean) =>
+    `flex h-10 w-11 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+      active ? 'bg-accent text-accent-foreground' : 'text-foreground/80 hover:bg-secondary'
+    }`;
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border bg-card p-3 shadow-sm sm:p-4 md:flex-row md:items-center">
-      <div className="relative flex-1">
-        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <div className="dark flex flex-wrap items-center gap-3 rounded-xl border bg-card p-3 text-foreground shadow-lg">
+      <form role="search" onSubmit={handleSubmit} className="relative min-w-0 flex-1 basis-56">
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <Input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Buscar productos…"
-          className="pl-10"
+          placeholder="Buscar por nombre y presionar Enter…"
+          className="rounded-full pl-10"
           aria-label="Buscar productos"
+          type="search"
+          enterKeyHint="search"
         />
+      </form>
+
+      {children}
+
+      <Select
+        value={params.sort}
+        onValueChange={(value) => router.push(buildHref(params, { sort: value }), { scroll: false })}
+      >
+        <SelectTrigger className="w-auto min-w-44 rounded-full" aria-label="Ordenar resultados">
+          <span className="truncate">{selectedSortLabel}</span>
+        </SelectTrigger>
+        <SelectContent>
+          {SORT_OPTIONS.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <div role="group" aria-label="Tipo de vista" className="hidden rounded-full border border-input bg-background p-[3px] sm:flex">
+        <Link
+          href={buildHref(params, { view: 'grid', page: params.page })}
+          scroll={false}
+          aria-label="Vista cuadrícula"
+          aria-current={params.view === 'grid' ? 'true' : undefined}
+          className={viewClass(params.view === 'grid')}
+        >
+          <LayoutGrid className="h-[18px] w-[18px]" />
+        </Link>
+        <Link
+          href={buildHref(params, { view: 'list', page: params.page })}
+          scroll={false}
+          aria-label="Vista lista"
+          aria-current={params.view === 'list' ? 'true' : undefined}
+          className={viewClass(params.view === 'list')}
+        >
+          <List className="h-[18px] w-[18px]" />
+        </Link>
       </div>
-
-      <div className="grid grid-cols-2 gap-3 md:flex md:w-auto">
-        <Select
-          value={current.category ?? 'all'}
-          onValueChange={(value) =>
-            navigate({ category: value === 'all' ? undefined : value })
-          }
-        >
-          <SelectTrigger className="md:w-56" aria-label="Filtrar por categoría">
-            <span className="truncate">{selectedCategoryName}</span>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas las categorías</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.slug}>
-                {category.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={current.sort ?? 'createdAt_desc'}
-          onValueChange={(value) => navigate({ sort: value })}
-        >
-          <SelectTrigger className="md:w-56" aria-label="Ordenar resultados">
-            <span className="truncate">{selectedSortLabel}</span>
-          </SelectTrigger>
-          <SelectContent>
-            {SORT_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {hasFilters && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            setSearch('');
-            navigate({ q: undefined, category: undefined, sort: undefined });
-          }}
-        >
-          <X className="h-4 w-4" />
-          Limpiar
-        </Button>
-      )}
     </div>
   );
 }

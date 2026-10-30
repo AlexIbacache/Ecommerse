@@ -1,4 +1,4 @@
-# Terral — E-commerce Full Stack
+# Store — E-commerce Full Stack
 
 Aplicación de e-commerce completa con tienda pública, cuentas de cliente, comentarios, carrito, checkout con **PayPal Sandbox** y panel administrativo.
 

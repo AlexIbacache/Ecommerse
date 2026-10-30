@@ -10,7 +10,7 @@ export function Footer() {
         <div className="space-y-3">
           <p className="flex items-center gap-2 font-display text-xl font-medium tracking-[-0.03em]">
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-cyan-glow" />
-            terral
+            store
           </p>
           <p className="text-sm text-muted-foreground">
             Objetos elegidos para vivir mejor.
@@ -45,7 +45,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-border py-6 text-center font-mono text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Terral · Proyecto de demostración
+        © {new Date().getFullYear()} Store · Proyecto de demostración
       </div>
     </footer>
   );

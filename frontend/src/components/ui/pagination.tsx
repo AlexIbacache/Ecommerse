@@ -30,12 +30,12 @@ export function Pagination({ page, totalPages, hrefForPage }: PaginationProps) {
         href={hrefForPage(page - 1)}
         aria-disabled={!hasPrevious}
         className={cn(
-          'inline-flex h-11 items-center gap-1 rounded-full px-4 text-sm transition-colors',
+          'inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-full px-3 text-sm transition-colors sm:px-4',
           hasPrevious ? 'hover:bg-secondary' : 'pointer-events-none opacity-40',
         )}
       >
         <ChevronLeft className="h-4 w-4" />
-        Anterior
+        <span className="sr-only sm:not-sr-only">Anterior</span>
       </Link>
 
       {pages.map((value, index) => {
@@ -65,11 +65,11 @@ export function Pagination({ page, totalPages, hrefForPage }: PaginationProps) {
         href={hrefForPage(page + 1)}
         aria-disabled={!hasNext}
         className={cn(
-          'inline-flex h-11 items-center gap-1 rounded-full px-4 text-sm transition-colors',
+          'inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-full px-3 text-sm transition-colors sm:px-4',
           hasNext ? 'hover:bg-secondary' : 'pointer-events-none opacity-40',
         )}
       >
-        Siguiente
+        <span className="sr-only sm:not-sr-only">Siguiente</span>
         <ChevronRight className="h-4 w-4" />
       </Link>
     </nav>

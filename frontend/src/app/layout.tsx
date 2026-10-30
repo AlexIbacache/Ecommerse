@@ -26,8 +26,8 @@ const sans = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Terral — Objetos para vivir mejor',
-    template: '%s · Terral',
+    default: 'Store — Objetos para vivir mejor',
+    template: '%s · Store',
   },
   description: 'Tienda online de objetos elegidos, con pagos mediante PayPal Sandbox.',
 };

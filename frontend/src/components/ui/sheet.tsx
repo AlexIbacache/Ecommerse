@@ -36,11 +36,14 @@ const EASE = [0.2, 0.7, 0.2, 1] as const;
 
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>
->(({ className, children, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & { side?: 'left' | 'bottom' }
+>(({ className, children, side = 'left', ...props }, ref) => {
   const open = React.useContext(SheetOpenContext);
   const reduce = useReducedMotion();
   const duration = reduce ? 0 : 0.25;
+  const bottom = side === 'bottom';
+  const hidden = bottom ? { y: reduce ? 0 : '100%' } : { x: reduce ? 0 : '-100%' };
+  const shown = bottom ? { y: 0 } : { x: 0 };
 
   return (
     <SheetPrimitive.Portal forceMount>
@@ -60,12 +63,15 @@ const SheetContent = React.forwardRef<
           <SheetPrimitive.Content key="content" ref={ref} forceMount asChild {...props}>
             <motion.div
               className={cn(
-                'fixed inset-y-0 left-0 z-50 flex h-full w-[86%] max-w-sm flex-col rounded-r-lg border-r bg-background p-6 shadow-lg',
+                'fixed z-50 flex flex-col bg-background shadow-lg',
+                bottom
+                  ? 'inset-x-0 bottom-0 max-h-[88vh] rounded-t-2xl border-t'
+                  : 'inset-y-0 left-0 h-full w-[86%] max-w-sm rounded-r-lg border-r p-6',
                 className,
               )}
-              initial={{ x: reduce ? 0 : '-100%', opacity: reduce ? 0 : 1 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: reduce ? 0 : '-100%', opacity: reduce ? 0 : 1 }}
+              initial={{ ...hidden, opacity: reduce ? 0 : 1 }}
+              animate={{ ...shown, opacity: 1 }}
+              exit={{ ...hidden, opacity: reduce ? 0 : 1 }}
               transition={{ duration, ease: EASE }}
             >
               {children}

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Menu, Search, ShoppingBag, UserRound } from 'lucide-react';
 import { toast } from 'sonner';
+import { ProductsMenu } from '@/components/products-menu';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -20,6 +21,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { getCategories, getProducts } from '@/lib/catalog';
+import type { Category, ProductListItem } from '@/lib/types';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCartStore } from '@/stores/cart-store';
 
@@ -35,8 +38,17 @@ export function Header() {
   const logout = useAuthStore((state) => state.logout);
   const cartCount = useCartStore((state) => state.count());
 
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [latest, setLatest] = useState<ProductListItem | null>(null);
+
   useEffect(() => {
     setMounted(true);
+    getCategories()
+      .then(setCategories)
+      .catch(() => setCategories([]));
+    getProducts({ sort: 'createdAt_desc', pageSize: 1 })
+      .then((result) => setLatest(result.data[0] ?? null))
+      .catch(() => setLatest(null));
   }, []);
 
   function submitSearch(event: React.FormEvent) {
@@ -94,11 +106,24 @@ export function Header() {
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
-              <SheetTitle>terral</SheetTitle>
+              <SheetTitle>store</SheetTitle>
             </SheetHeader>
             <nav className="mt-8 flex flex-col gap-1 text-base [&>a]:flex [&>a]:min-h-11 [&>a]:items-center [&>a]:rounded-md [&>a]:px-2 [&>a:hover]:bg-secondary">
               <Link href="/">Inicio</Link>
               <Link href="/productos">Productos</Link>
+              {categories.length > 0 && (
+                <div className="mb-1 ml-3 flex flex-col border-l pl-3">
+                  {categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      href={`/productos?category=${category.slug}`}
+                      className="flex min-h-11 items-center rounded-md px-2 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
               <Link href="/carrito" className="flex items-center gap-2">
                 <ShoppingBag className="h-4 w-4" />
                 Carrito {mounted && cartCount > 0 ? `(${cartCount})` : ''}
@@ -136,25 +161,25 @@ export function Header() {
 
         <Link href="/" className="flex items-center gap-2 rounded-sm font-display text-xl font-medium tracking-[-0.03em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <span aria-hidden="true" className="h-2 w-2 rounded-full bg-cyan-glow" />
-          terral
+          store
         </Link>
 
         <nav aria-label="Principal" className="hidden items-center gap-1 text-sm md:flex">
-          {[
-            { href: '/', label: 'Inicio', active: pathname === '/' },
-            { href: '/productos', label: 'Productos', active: pathname.startsWith('/productos') || pathname.startsWith('/producto/') },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={item.active ? 'page' : undefined}
-              className={`inline-flex h-10 items-center rounded-full px-4 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                item.active ? 'bg-accent/10 text-accent' : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          <Link
+            href="/"
+            aria-current={pathname === '/' ? 'page' : undefined}
+            className={`inline-flex h-10 items-center rounded-full px-4 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              pathname === '/' ? 'bg-accent/10 text-accent' : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+            }`}
+          >
+            Inicio
+          </Link>
+          <ProductsMenu
+            categories={categories}
+            latest={latest}
+            pathname={pathname}
+            active={pathname.startsWith('/productos') || pathname.startsWith('/producto/')}
+          />
         </nav>
 
         <form onSubmit={submitSearch} className="ml-auto hidden w-44 items-center md:flex lg:w-72">
