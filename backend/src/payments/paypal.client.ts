@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+export interface PaypalCapture {
+  id?: string;
+  status?: string;
+  amount?: { value?: string; currency_code?: string };
+}
+
 export interface PaypalPurchaseUnit {
   amount?: { value?: string; currency_code?: string };
+  payments?: { captures?: PaypalCapture[] };
 }
 
 export interface PaypalOrder {

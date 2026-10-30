@@ -95,7 +95,18 @@ export async function startPaypalMock(
           id: `${order.id}-CAPTURE`,
           status: 'COMPLETED',
           purchase_units: [
-            { amount: { currency_code: 'USD', value: order.amount } },
+            {
+              reference_id: 'default',
+              payments: {
+                captures: [
+                  {
+                    id: `${order.id}-CAPTURE`,
+                    status: 'COMPLETED',
+                    amount: { currency_code: 'USD', value: order.amount },
+                  },
+                ],
+              },
+            },
           ],
         });
         return;

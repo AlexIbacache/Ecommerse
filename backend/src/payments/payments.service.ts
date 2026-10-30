@@ -13,11 +13,20 @@ import { PaypalClient, type PaypalOrder } from './paypal.client';
 class StockConflictError extends Error {}
 
 function amountToCents(order: PaypalOrder): number | null {
-  const value = order.purchase_units?.[0]?.amount?.value;
+  const unit = order.purchase_units?.[0];
+  // La respuesta de capture trae el importe en payments.captures[].amount;
+  // la de getOrder, en purchase_units[].amount. Se aceptan ambas.
+  const value =
+    unit?.payments?.captures?.[0]?.amount?.value ?? unit?.amount?.value;
+
   if (!value) {
     return null;
   }
   return toCents(value);
+}
+
+function captureIdOf(order: PaypalOrder): string {
+  return order.purchase_units?.[0]?.payments?.captures?.[0]?.id ?? order.id;
 }
 
 @Injectable()
@@ -139,11 +148,12 @@ export class PaymentsService {
       include: { order: { include: { items: true } } },
     });
 
-    if (
-      !payment ||
-      !payment.paypalOrderId ||
-      payment.order.status !== 'PENDIENTE_PAGO'
-    ) {
+    if (!payment || !payment.paypalOrderId) {
+      return;
+    }
+
+    const orderStatus = payment.order.status;
+    if (orderStatus !== 'PENDIENTE_PAGO' && orderStatus !== 'PAGO_FALLIDO') {
       return;
     }
 
@@ -182,7 +192,12 @@ export class PaymentsService {
           select: { status: true },
         });
 
-        if (current?.status !== 'PENDIENTE_PAGO') {
+        if (!current) {
+          return;
+        }
+
+        // Ya resuelto: no se vuelve a descontar stock ni a marcar pagado.
+        if (current.status === 'PAGADO' || current.status === 'CANCELADO') {
           return;
         }
 
@@ -201,7 +216,7 @@ export class PaymentsService {
           where: { id: paymentId },
           data: {
             status: 'COMPLETADA',
-            paypalCaptureId: paypalOrder.id,
+            paypalCaptureId: captureIdOf(paypalOrder),
             rawPayload: paypalOrder as unknown as Prisma.InputJsonValue,
           },
         });
