@@ -32,6 +32,7 @@ export function Header() {
   const [mounted, setMounted] = useState(false);
   const [search, setSearch] = useState('');
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const user = useAuthStore((state) => state.user);
   const status = useAuthStore((state) => state.status);
@@ -51,8 +52,12 @@ export function Header() {
       .catch(() => setLatest(null));
   }, []);
 
+  // Respaldo: cualquier cambio de ruta cierra el menú móvil.
+  useEffect(() => setMenuOpen(false), [pathname]);
+
   function submitSearch(event: React.FormEvent) {
     event.preventDefault();
+    setMenuOpen(false);
     const term = search.trim();
     router.push(term ? `/productos?q=${encodeURIComponent(term)}` : '/productos');
   }
@@ -98,7 +103,7 @@ export function Header() {
   return (
     <header className="dark sticky top-0 z-40 border-b bg-background/95 text-foreground shadow-md backdrop-blur-md">
       <div className="container-page flex h-16 items-center gap-3 sm:gap-4">
-        <Sheet>
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menú">
               <Menu className="h-5 w-5" />
@@ -108,7 +113,11 @@ export function Header() {
             <SheetHeader>
               <SheetTitle>store</SheetTitle>
             </SheetHeader>
-            <nav className="mt-8 flex flex-col gap-1 text-base [&>a]:flex [&>a]:min-h-11 [&>a]:items-center [&>a]:rounded-md [&>a]:px-2 [&>a:hover]:bg-secondary">
+            <nav
+              onClick={(event) => {
+                if ((event.target as HTMLElement).closest('a')) setMenuOpen(false);
+              }}
+              className="mt-8 flex flex-col gap-1 text-base [&>a]:flex [&>a]:min-h-11 [&>a]:items-center [&>a]:rounded-md [&>a]:px-2 [&>a:hover]:bg-secondary">
               <Link href="/">Inicio</Link>
               <Link href="/productos">Productos</Link>
               {categories.length > 0 && (
@@ -134,7 +143,10 @@ export function Header() {
                   {user.role === 'ADMINISTRADOR' && <Link href="/admin">Panel</Link>}
                   <button
                     type="button"
-                    onClick={() => setConfirmLogout(true)}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setConfirmLogout(true);
+                    }}
                     className="flex min-h-11 items-center rounded-md px-2 text-left hover:bg-secondary"
                   >
                     Salir
